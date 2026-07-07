@@ -45,12 +45,19 @@ Repo criado espelhando o desktop, mas mobile-only: `src-tauri` enxuto (só tarja
 offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
 `cargo check` no host **passa**. Targets Rust Android instalados no host.
 
-### M1 — Android (no Linux)
-- Toolchain: JDK 17, Android SDK (cmdline-tools) + **NDK**, `ANDROID_HOME`/`NDK_HOME`.
-- `npm run tauri android init` → `gen/android`; `tauri android dev` em emulador/aparelho.
-- **SMOKE-TEST #1 (crítico):** `/chat` **streaming (SSE)** na WebView Android + login →
-  cookie persistente + mic (getUserMedia).
-- Keystore (reuso do padrão Blue3), **AAB** assinado, script `build-local` Android.
+### M1 — Android (no Linux) — **build OK ✅**, smoke-test on-device pendente
+- ✅ Toolchain **reusado da máquina** (dev Flutter da Blue3), zero download: JDK 17
+  (`~/Android/jdk-17`), SDK (`~/Android/Sdk`, platforms 34-36, build-tools, adb),
+  **NDK 28.2**. Requer `JAVA_HOME`/`ANDROID_HOME`/`NDK_HOME` no ambiente (documentar
+  em `docs/build.md` ou num `build-local` de Android).
+- ✅ `tauri android init` → `gen/android` (versionado); `tauri android build --debug`
+  produz **APK + AAB** (arm64), Rust compilado via NDK. Cadeia validada de ponta a ponta.
+  `applicationId = cloud.blue3.shvia`.
+- ⏳ **SMOKE-TEST #1 (crítico):** `/chat` **streaming (SSE)** na WebView Android + login
+  → cookie persistente + mic — **precisa de aparelho/emulador** (esta máquina não tem
+  KVM/device). `tauri android dev` com um device via adb, ou emulador com KVM.
+- ⏳ Keystore (reuso do padrão Blue3: `key.properties` + Play App Signing), **AAB
+  assinado** (release), script `build-local` de Android.
 
 ### M2 — iOS (no Mac)
 - Xcode + `brew install cocoapods`; `tauri ios init` → `gen/apple`; `tauri ios dev`.
@@ -70,5 +77,6 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
-- [x] M0 · [ ] M1 · [ ] M2 · [ ] M3 · [ ] M4 · [ ] M5
-- Próximo executável **no Linux**: M1 (toolchain Android + `tauri android init`).
+- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [ ] M2 · [ ] M3 · [ ] M4 · [ ] M5
+- Próximo: smoke-test do /chat num aparelho Android; ou adiantar **M5** (responsivo,
+  repo SHVIA) que não depende de device; ou **M2** (iOS, no Mac).
