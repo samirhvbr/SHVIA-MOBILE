@@ -1,4 +1,5 @@
-/* Casca de bootstrap do ShvIA Mobile — splash de lançamento.
+/* Casca de bootstrap do ShvIA Mobile — splash de lançamento (em paridade com a
+   casca do SHVIA-DESKTOP; manter os dois juntos ao evoluir).
    Paleta espelhada dos tokens do ShvIA web (public/css/tokens.css do SHVIA-WEB):
    o fundo é EXATAMENTE o --bg do app (#0B0F17), então a troca casca → Blade
    remoto acontece sem "pulo" de cor. Motion: marca respira devagar + ondas de
@@ -162,8 +163,17 @@ body {
   transition: background 150ms ease-out;
 }
 
+.actions button:hover {
+  background: rgba(52, 179, 236, 0.18);
+}
+
 .actions button:active {
   background: rgba(52, 179, 236, 0.22);
+}
+
+.actions button:focus-visible {
+  outline: 2px solid var(--azure);
+  outline-offset: 2px;
 }
 
 .actions button.ghost {
@@ -174,6 +184,11 @@ body {
   font-size: 0.82rem;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.actions button.ghost:hover {
+  color: var(--tx);
+  background: transparent;
 }
 
 /* ── Rodapé ────────────────────────────────────────────────────── */
