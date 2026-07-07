@@ -15,6 +15,12 @@
 (iOS = WKWebView, Android = System WebView). Servidor = fonte da verdade. Não é
 reescrita — é o mesmo conceito do desktop, mobile-only.
 
+**Auth (comportamento aprovado — Samir, 07/07/2026):** cookie de sessão
+same-origin; sessão válida → **entra direto, sem pedir credencial** (validado no
+desktop Linux). Sem autofill de usuário/senha no cliente (segredo zero no shell,
+ADR-001). No iOS, conferir a persistência real do cookie entre reinícios no
+smoke-test (item 2 de [../docs/smoke-test.md](../docs/smoke-test.md)).
+
 ## 2. Barreiras (e o que já está resolvido)
 
 1. **iOS só builda em macOS + Xcode.** Android builda no Linux. (Há Mac/CI macOS.)
@@ -60,7 +66,10 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   assinado** (release), script `build-local` de Android.
 
 ### M2 — iOS (no Mac)
-- Xcode + `brew install cocoapods`; `tauri ios init` → `gen/apple`; `tauri ios dev`.
+- **MacBook disponível (07/07)** — o desktop 0.5.5 rodou lá com `npm run tauri dev`.
+- Roteiro executável em [../docs/smoke-test.md](../docs/smoke-test.md) §iOS:
+  Xcode + cocoapods + targets Rust; `tauri ios init` → **commitar `gen/apple`**;
+  `tauri icon` de novo (preenche o Xcode assets); `tauri ios dev`.
 - Signing com o Team ID `S65UBCTPN5`; primeiro build no **TestFlight**.
 
 ### M3 — Valor nativo (destrava App Store 4.2)
@@ -77,6 +86,8 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
-- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [ ] M2 · [ ] M3 · [ ] M4 · [ ] M5
-- Próximo: smoke-test do /chat num aparelho Android; ou adiantar **M5** (responsivo,
-  repo SHVIA) que não depende de device; ou **M2** (iOS, no Mac).
+- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [ ] M2 · [ ] M3 · [ ] M4 ·
+  [x] M5 (núcleo: topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4; sobras menores =
+  max-height de modais com teclado, faixa 720–768px)
+- **Próximo: smoke-tests no MacBook** (Android + iOS) seguindo
+  [../docs/smoke-test.md](../docs/smoke-test.md) — o iOS já é o começo do M2.

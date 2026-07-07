@@ -67,10 +67,15 @@ pub fn run() {
                     let _ = handle.opener().open_url(url.to_string(), None::<&str>);
                     false
                 })
-                // injeta a tarja "Sistema Offline" em cada página carregada.
+                // injeta a tarja "Sistema Offline" SÓ nas páginas remotas do
+                // ShvIA: a casca local tem UI própria de offline (splash com
+                // "Tentar novamente") — com a tarja junto ficava em dobro.
                 .on_page_load(|webview, payload| {
                     if let PageLoadEvent::Finished = payload.event() {
-                        let _ = webview.eval(OFFLINE_BANNER_JS);
+                        let host = payload.url().host_str().unwrap_or_default().to_owned();
+                        if host != "localhost" && host != "tauri.localhost" {
+                            let _ = webview.eval(OFFLINE_BANNER_JS);
+                        }
                     }
                 })
                 .build()?;

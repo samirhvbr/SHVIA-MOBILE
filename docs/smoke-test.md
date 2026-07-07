@@ -1,0 +1,83 @@
+# Smoke-test móvel (Android + iOS) — roteiro pro MacBook
+
+> Valida o shell em aparelho/simulador de verdade. O item crítico é o **/chat
+> streaming (SSE)** — o resto é confirmação. Android também roda no Linux (com
+> device USB); iOS **só** no macOS.
+
+---
+
+## Checklist (as duas plataformas)
+
+| # | Teste | Esperado |
+|---|-------|----------|
+| 1 | **Splash** ao abrir | Marca com sonar → entra no ShvIA. Sem rede: "Sem conexão com o servidor" + **Tentar novamente** (sem tarja vermelha na casca — corrigido no 0.2.4/0.5.6; a tarja continua nas páginas remotas) |
+| 2 | **Login + persistência** | Logar; fechar o app; reabrir → **entra direto** sem pedir credencial (cookie de sessão persistiu — comportamento aprovado 07/07). No iOS conferir de verdade: o WKWebView às vezes atrasa o flush de cookies |
+| 3 | **/chat SSE** ⭐ | Perguntar à Anna → resposta **streama token a token** (não chega tudo de uma vez no fim). É o smoke-test #1 do projeto |
+| 4 | **TTS "ouvir"** | Play na resposta → fala **pt-BR** (speechSynthesis nativo: iOS tem voz pt-BR; Android depende do engine TTS do aparelho) |
+| 5 | **Mic/ditado** | Se o botão aparecer: permissão de mic + transcrição funcionando |
+| 6 | **Anexos** | 📎 abre o seletor nativo; imagem sobe e aparece no chat |
+| 7 | **Links externos** | Link fora de `*.blue3.com.br` abre no **navegador do sistema**, não dentro do app |
+| 8 | **Teclado virtual** | Compositor não fica coberto pelo teclado; safe-area ok (notch/gesto) |
+| 9 | **Rotação** | Paisagem não quebra o layout (a topbar rola na horizontal) |
+
+Anotar resultado por plataforma no [.continue/escopo-mobile.md](../.continue/escopo-mobile.md) §Estado.
+
+---
+
+## Android (MacBook ou Linux + aparelho)
+
+**Caminho rápido — instalar o APK debug pronto** (buildado no Linux):
+
+```bash
+# no aparelho: ativar Depuração USB (Config > Sobre > 7 toques em "Número da versão")
+adb devices                      # aparelho tem que listar como "device"
+adb install -r src-tauri/gen/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk
+```
+
+**Caminho dev (hot reload)** — precisa do toolchain Android na máquina:
+
+```bash
+# pré-requisitos (uma vez): JDK 17, Android SDK + NDK, e:
+rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+export JAVA_HOME=<jdk17> ANDROID_HOME=<sdk> NDK_HOME=<sdk>/ndk/<versão>
+
+npm install
+npm run tauri android dev        # escolhe device/emulador e roda
+```
+
+> No Linux da Blue3 o toolchain já existe (`~/Android/jdk-17`, `~/Android/Sdk`,
+> NDK 28.2) — o ambiente está em `docs/build.md`/histórico do repo.
+
+---
+
+## iOS (só macOS) — este passo É o começo do M2
+
+```bash
+# pré-requisitos (uma vez):
+xcode-select --install                    # ou Xcode completo da App Store
+brew install cocoapods
+rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
+
+npm install
+npm run tauri ios init                    # gera src-tauri/gen/apple (COMMITAR!)
+npm run tauri icon brand/shvia-desktop-icon-1024.png   # preenche os ícones no gen/apple recém-criado
+npm run tauri ios dev                     # escolhe simulador; 1º build demora
+```
+
+- **Device físico:** abrir `src-tauri/gen/apple/*.xcodeproj` no Xcode uma vez e
+  selecionar o time de assinatura — **Team ID `S65UBCTPN5`** (conta Blue3 já
+  existente; signing automático). Depois `npm run tauri ios dev --host` ou pelo
+  próprio Xcode.
+- Ícones já gerados em `src-tauri/icons/ios/` (0.2.2); o `tauri icon` acima os
+  aplica ao projeto Xcode.
+- Rodou → **commitar o `gen/apple`** do MacBook (mesmo padrão do `gen/android`),
+  com bump de versão (Y: novo alvo de runtime).
+
+---
+
+## Truques
+
+- `?hold` / `?hold=offline` na casca (dev no navegador) congelam os estados do
+  splash pra estilização — `npm run dev` + `localhost:1420/?hold=offline`.
+- Streaming SSE parece "tudo de uma vez"? Conferir se não há proxy/VPN bufferizando;
+  testar em 4G puro também.
