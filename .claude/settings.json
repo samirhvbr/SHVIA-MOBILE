@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment_perfil": "PERFIL OPUS-ONLY — Opus 4.8 em tudo, janela 1M (incluso no Max 20x, zero créditos). Usar LONGE do limite. Sem CLAUDE_CODE_DISABLE_1M_CONTEXT de propósito (e o que deixa o Opus subir pra 1M). 'max' real de effort vai por env CLAUDE_CODE_EFFORT_LEVEL=max; o campo effortLevel do JSON ignora 'max'.",
+  "model": "opus",
+  "effortLevel": "max",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "opus",
+    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-8"
+  },
+  "permissions": {
+    "_comment": "Stack: Tauri 2 (Rust) + casca web (npm/Vite) + sidecar Python (F2). Servidor é remoto — nenhum banco/segredo roda aqui. A allow-list recomendada está no .claude/README.md; aplique manualmente (grant de permissão é ação sua, não do agente).",
+    "defaultMode": "plan",
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.p8)",
+      "Read(./**/*.p12)",
+      "Read(./**/*.pfx)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -rf /:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(curl * | sh:*)",
+      "Bash(curl * | bash:*)",
+      "Bash(wget * | sh:*)"
+    ]
+  }
+}

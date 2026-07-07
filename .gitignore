@@ -1,0 +1,62 @@
+# ── SO ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Node / Vite (casca do frontend) ─────────────────────────────────
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Rust / Tauri ────────────────────────────────────────────────────
+target/
+**/target/
+**/*.rs.bk
+*.pdb
+
+# ── Python (sidecar — entra na F2) ──────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+sidecar/build/
+sidecar/dist/
+
+# ── Binário do sidecar empacotado (gerado no build/CI) ──────────────
+src-tauri/resources/sidecar-bin*
+
+# ── Ambiente / segredos (NUNCA versionar) ───────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.p8
+*.pfx
+.tauri/
+# chave privada do updater Tauri — fica em secret de CI, não no repo
+*.tauri.key
+
+# ── Artefatos de build / empacotamento ──────────────────────────────
+/test-build/
+*.dmg
+*.msi
+*.exe
+*.AppImage
+*.deb
+*.rpm
+*.app.tar.gz
+
+# ── Editores ────────────────────────────────────────────────────────
+.idea/
+*.swp
+*.swo
+# .vscode/ é versionado seletivamente (settings compartilhados) — ajustar se preciso
+
+# NÃO ignorar: .continue/ e .claude/ são versionados de propósito.

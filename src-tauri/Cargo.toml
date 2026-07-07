@@ -1,0 +1,27 @@
+[package]
+name = "shvia-mobile"
+version = "0.1.0"
+description = "ShvIA Mobile — cliente iOS/Android do ShvIA (shell fino Tauri 2)"
+authors = ["Samir Hanna Verza <samirhv@me.com>"]
+edition = "2021"
+
+# A versão acima é mantida em sincronia com version.md por scripts/sync-version.mjs.
+# Demais chaves: https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# cdylib p/ Android (.so via NDK), staticlib p/ iOS; rlib p/ o binário de dev no host.
+name = "shvia_mobile_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+# Abre links externos (fora de *.blue3.com.br) no navegador do SO. Suporta mobile.
+tauri-plugin-opener = "2"
+
+# Pin de compatibilidade (não usamos `time` diretamente): o WebView (wry → cookie
+# 0.18.1) chama a API antiga de `Parsable::parse`. Fixamos `time` numa versão
+# compatível — herdado do SHVIA-DESKTOP. Remover quando wry/cookie subirem.
+time = "=0.3.41"
