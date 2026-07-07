@@ -10,7 +10,7 @@
 
 | # | Teste | Esperado |
 |---|-------|----------|
-| 1 | **Splash** ao abrir | Marca com sonar → entra no ShvIA. Sem rede: "Sem conexão com o servidor" + **Tentar novamente** (sem tarja vermelha na casca — corrigido no 0.2.4/0.5.6; a tarja continua nas páginas remotas) |
+| 1 | **Splash** ao abrir | Marca com sonar → entra no ShvIA. Sem rede: "Sem conexão com o servidor — reconectando…" + **Tentar agora** (sem tarja vermelha na casca; a tarja continua nas páginas remotas). **Religar a rede → entra sozinho** em ≤5 s, sem clique |
 | 2 | **Login + persistência** | Logar; fechar o app; reabrir → **entra direto** sem pedir credencial (cookie de sessão persistiu — comportamento aprovado 07/07). No iOS conferir de verdade: o WKWebView às vezes atrasa o flush de cookies |
 | 3 | **/chat SSE** ⭐ | Perguntar à Anna → resposta **streama token a token** (não chega tudo de uma vez no fim). É o smoke-test #1 do projeto |
 | 4 | **TTS "ouvir"** | Play na resposta → fala **pt-BR** (speechSynthesis nativo: iOS tem voz pt-BR; Android depende do engine TTS do aparelho) |
