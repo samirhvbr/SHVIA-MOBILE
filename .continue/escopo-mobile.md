@@ -82,11 +82,17 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
     e **entrou sozinho** sem clique (auto-retry ok).
   - **Item 2 ✓** — cookie **persistiu** após `simctl terminate` + relaunch (a
     dúvida do WKWebView está respondida: entra logado direto).
-  - **Item 3 ~** — 2 ciclos completos de chat com a Anna (raciocínio 17 s +
-    resposta 370 tok @ 19,9 tok/s, spinner/timer ao vivo = render progressivo);
-    a confirmação literal token-a-token ficou bloqueada pelo bug de layout abaixo.
+  - **Item 3 ✓ (0.3.4, re-teste pós-2.17.11)** — **streaming token a token
+    confirmado visualmente**: 3 frames seguidos com o raciocínio crescendo
+    palavra a palavra (cursor de digitação visível) e timer ao vivo; resposta
+    final 1.239 tok @ 22 tok/s. Enter do teclado físico **envia** (form submit
+    funciona mesmo com o quirk de digitação do simulador).
   - **Item 4 ~** — botão "ouvir" presente; áudio precisa de ouvido humano.
   - **Itens 5–7** (mic, anexos, links externos) pendentes — precisam de humano.
+  - **Item 8 ✓ (re-teste)** — teclado virtual sobe e o composer levanta junto,
+    campo focado visível, sem cobertura; digitação pelas teclas na tela funciona.
+  - **Item 9 ~ (re-teste)** — portrait ok (rotação DURANTE streaming não quebrou
+    a geração); landscape segue layout desktop (sobra conhecida da 2.17.11).
 - 🐞 **BUG BLOQUEADOR — CORRIGIDO no SHVIA-WEB 2.17.11 (14/07), aguardando
   deploy.** Causa-raiz achada com o CSS de produção (md5 == repo): em ≤768 px o
   painel do meio vira drawer `position:fixed` **default-aberto** com fundo
@@ -134,12 +140,10 @@ Pré-requisito de qualidade p/ submeter.
 ## 5. Estado
 
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
-  0.3.1: `gen/apple` no repo, app logado no simulador, itens 1–2 do smoke-test ✓,
-  chat funcionando; itens 3/8/9 bloqueados por bug de layout do SHVIA-WEB) ·
-  [ ] M3 · [ ] M4 · [~] M5 (topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4, mas o
-  smoke-test iOS revelou sobras GRANDES: drawer preso + hit-offset ~400 px em
-  440 pt + safe-area — ver 🐞 no M2)
-- **Próximo:** **deployar o SHVIA-WEB 2.17.11** (fix já commitado/pushado) e
-  re-rodar itens 3/8 no simulador (item 9 landscape tem sobra conhecida — ver
-  🐞 no M2); itens 4–7 com humano (TTS/mic/anexos/links). Android on-device
-  continua pendente (mesma sentada com aparelho USB).
+  0.3.5: itens 1–3 e 8 do smoke-test ✓ no simulador com a 2.17.11 em produção,
+  item 9 portrait ok; faltam 4–7 com humano) · [ ] M3 · [ ] M4 ·
+  [~] M5 (2.17.11 matou o drawer-vidro/safe-area; sobras: auto-zoom no composer,
+  leve overflow horizontal em portrait, landscape segue desktop)
+- **Próximo:** itens 4–7 do smoke-test com humano (TTS/mic/anexos/links) e as
+  sobras do SHVIA-WEB acima. Depois: **TestFlight** (M2 final). Android
+  on-device continua pendente (mesma sentada com aparelho USB).
