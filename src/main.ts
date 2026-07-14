@@ -17,6 +17,8 @@
 // Dev: "?hold" congela no estado connecting e "?hold=offline" mostra o estado
 // offline — pra estilizar o splash sem ser redirecionado (sem auto-retry).
 
+import { version } from "../package.json";
+
 // URL do servidor ShvIA (fonte da verdade).
 const SHVIA_URL = "https://ia.blue3.com.br";
 // Intervalo do auto-retry no estado offline.
@@ -98,6 +100,11 @@ async function connect(): Promise<void> {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  // Versão da casca visível na base (vem de package.json, que o
+  // scripts/sync-version.mjs mantém igual ao version.md).
+  const footEl = document.getElementById("foot");
+  if (footEl) footEl.textContent = `Blue3 · v${version}`;
+
   retryEl?.addEventListener("click", () => {
     void connect();
   });

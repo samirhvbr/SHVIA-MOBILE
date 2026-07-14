@@ -70,11 +70,17 @@ pub fn run() {
                 // injeta a tarja "Sistema Offline" SÓ nas páginas remotas do
                 // ShvIA: a casca local tem UI própria de offline (splash com
                 // "Tentar novamente") — com a tarja junto ficava em dobro.
+                // Também expõe a versão da casca (`window.__shviaShellVersion`)
+                // para o ShvIA web poder exibi-la junto da versão do servidor.
                 .on_page_load(|webview, payload| {
                     if let PageLoadEvent::Finished = payload.event() {
                         let host = payload.url().host_str().unwrap_or_default().to_owned();
                         if host != "localhost" && host != "tauri.localhost" {
-                            let _ = webview.eval(OFFLINE_BANNER_JS);
+                            let _ = webview.eval(format!(
+                                "window.__shviaShellVersion={:?};{}",
+                                env!("CARGO_PKG_VERSION"),
+                                OFFLINE_BANNER_JS
+                            ));
                         }
                     }
                 })
