@@ -64,10 +64,16 @@ npm run tauri icon brand/shvia-desktop-icon-1024.png   # preenche os ícones no 
 npm run tauri ios dev                     # escolhe simulador; 1º build demora
 ```
 
-- **Device físico:** abrir `src-tauri/gen/apple/*.xcodeproj` no Xcode uma vez e
-  selecionar o time de assinatura — **Team ID `S65UBCTPN5`** (conta Blue3 já
-  existente; signing automático). Depois `npm run tauri ios dev --host` ou pelo
-  próprio Xcode.
+- **Signing já pré-configurado** (0.2.6): o `tauri ios init` gera o projeto com o
+  **Team ID `S65UBCTPN5`** (`bundle.iOS.developmentTeam` no `tauri.conf.json`).
+  Pré-requisito no Mac: Xcode logado na conta Apple da Blue3 (Settings ▸ Accounts).
+  Se o Xcode reclamar de assinatura, abrir `src-tauri/gen/apple/*.xcodeproj` ▸
+  Signing & Capabilities e conferir o time.
+- **Permissões de mic/câmera** já entram via `src-tauri/Info.ios.plist` (0.2.6, o
+  Tauri mescla no Info.plist gerado) — o teste 5 (ditado) deve mostrar o prompt do
+  iOS com o texto em português; se o app fechar sozinho ao tocar o mic, a mescla
+  não aconteceu.
+- **Device físico:** `npm run tauri ios dev --host` ou pelo próprio Xcode.
 - Ícones já gerados em `src-tauri/icons/ios/` (0.2.2); o `tauri icon` acima os
   aplica ao projeto Xcode.
 - Rodou → **commitar o `gen/apple`** do MacBook (mesmo padrão do `gen/android`),

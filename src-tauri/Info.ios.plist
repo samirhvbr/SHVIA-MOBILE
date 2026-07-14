@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Mesclado pelo Tauri no Info.plist do projeto iOS gerado (gen/apple).
+     Sem estas chaves o iOS mata o app ao pedir mic/câmera (ditado e anexo
+     por foto do ShvIA web) e a review da Apple rejeita o binário. -->
+<plist version="1.0">
+  <dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>O microfone é usado para ditar mensagens por voz no chat.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>A câmera é usada para tirar fotos e anexá-las ao chat.</string>
+  </dict>
+</plist>

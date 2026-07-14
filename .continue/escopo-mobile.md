@@ -65,12 +65,16 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
 - ⏳ Keystore (reuso do padrão Blue3: `key.properties` + Play App Signing), **AAB
   assinado** (release), script `build-local` de Android.
 
-### M2 — iOS (no Mac)
+### M2 — iOS (no Mac) — **em andamento (foco atual, 14/07)**
+- ✅ **Pré-config feita do Linux (0.2.6):** `bundle.iOS.developmentTeam =
+  S65UBCTPN5` no `tauri.conf.json` (o init já sai assinável) +
+  `src-tauri/Info.ios.plist` com mic/câmera (o Tauri mescla no Info.plist
+  gerado) + ícones iOS prontos desde 0.2.2.
 - **MacBook disponível (07/07)** — o desktop 0.5.5 rodou lá com `npm run tauri dev`.
-- Roteiro executável em [../docs/smoke-test.md](../docs/smoke-test.md) §iOS:
+- ⏳ Roteiro executável em [../docs/smoke-test.md](../docs/smoke-test.md) §iOS:
   Xcode + cocoapods + targets Rust; `tauri ios init` → **commitar `gen/apple`**;
-  `tauri icon` de novo (preenche o Xcode assets); `tauri ios dev`.
-- Signing com o Team ID `S65UBCTPN5`; primeiro build no **TestFlight**.
+  `tauri icon` de novo (preenche o Xcode assets); `tauri ios dev` + checklist.
+- Depois do smoke-test: primeiro build no **TestFlight**.
 
 ### M3 — Valor nativo (destrava App Store 4.2)
 Push (FCM/APNs), biometria, compartilhar, deep-link `shvia://`, tela offline nativa,
@@ -86,8 +90,10 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
-- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [ ] M2 · [ ] M3 · [ ] M4 ·
+- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
+  pré-config do Linux feita em 0.2.6 — falta o lado Mac) · [ ] M3 · [ ] M4 ·
   [x] M5 (núcleo: topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4; sobras menores =
   max-height de modais com teclado, faixa 720–768px)
-- **Próximo: smoke-tests no MacBook** (Android + iOS) seguindo
-  [../docs/smoke-test.md](../docs/smoke-test.md) — o iOS já é o começo do M2.
+- **Próximo: no MacBook** — `tauri ios init` + smoke-test iOS seguindo
+  [../docs/smoke-test.md](../docs/smoke-test.md) §iOS (o Android on-device
+  continua pendente e pode ser feito na mesma sentada com um aparelho USB).
