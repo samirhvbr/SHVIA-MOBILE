@@ -71,9 +71,16 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   `src-tauri/Info.ios.plist` com mic/câmera (o Tauri mescla no Info.plist
   gerado) + ícones iOS prontos desde 0.2.2.
 - **MacBook disponível (07/07)** — o desktop 0.5.5 rodou lá com `npm run tauri dev`.
-- ⏳ Roteiro executável em [../docs/smoke-test.md](../docs/smoke-test.md) §iOS:
-  Xcode + cocoapods + targets Rust; `tauri ios init` → **commitar `gen/apple`**;
-  `tauri icon` de novo (preenche o Xcode assets); `tauri ios dev` + checklist.
+- ✅ **Lado Mac feito (0.3.0, 14/07):** `tauri ios init` → `gen/apple` gerado
+  (Team + bundle conferidos no `project.pbxproj`; mic/câmera mesclados no
+  Info.plist) + `tauri icon` (Xcode assets) + `tauri ios dev` → **app abriu
+  logado no simulador iPhone 17 Pro Max**. Atenção: `tauri icon` reseta o
+  `ic_launcher_background.xml` do Android p/ `#fff` — restaurar o navy `#0D1B2A`
+  após rodar (feito em 0.3.0).
+- ⏳ Checklist do smoke-test (§iOS itens 3–9: SSE ⭐, TTS, mic, anexos, links,
+  teclado, rotação) + **safe-area**: a topbar remota sobe por baixo da status
+  bar/Dynamic Island no simulador (`viewport-fit`/`env(safe-area-inset-top)` —
+  provável ajuste no SHVIA-WEB, ver M3/M5).
 - Depois do smoke-test: primeiro build no **TestFlight**.
 
 ### M3 — Valor nativo (destrava App Store 4.2)
@@ -91,9 +98,10 @@ Pré-requisito de qualidade p/ submeter.
 ## 5. Estado
 
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
-  pré-config do Linux feita em 0.2.6 — falta o lado Mac) · [ ] M3 · [ ] M4 ·
+  0.3.0: `gen/apple` no repo e app rodando logado no simulador — falta o
+  checklist completo do smoke-test) · [ ] M3 · [ ] M4 ·
   [x] M5 (núcleo: topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4; sobras menores =
   max-height de modais com teclado, faixa 720–768px)
-- **Próximo: no MacBook** — `tauri ios init` + smoke-test iOS seguindo
-  [../docs/smoke-test.md](../docs/smoke-test.md) §iOS (o Android on-device
-  continua pendente e pode ser feito na mesma sentada com um aparelho USB).
+- **Próximo:** rodar o checklist do smoke-test iOS (§iOS itens 3–9) no simulador
+  que já está de pé, e resolver a safe-area da topbar (status bar/Dynamic
+  Island). Android on-device continua pendente (mesma sentada com aparelho USB).
