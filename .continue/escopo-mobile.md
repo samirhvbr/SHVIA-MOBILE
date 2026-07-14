@@ -77,10 +77,28 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   logado no simulador iPhone 17 Pro Max**. Atenção: `tauri icon` reseta o
   `ic_launcher_background.xml` do Android p/ `#fff` — restaurar o navy `#0D1B2A`
   após rodar (feito em 0.3.0).
-- ⏳ Checklist do smoke-test (§iOS itens 3–9: SSE ⭐, TTS, mic, anexos, links,
-  teclado, rotação) + **safe-area**: a topbar remota sobe por baixo da status
-  bar/Dynamic Island no simulador (`viewport-fit`/`env(safe-area-inset-top)` —
-  provável ajuste no SHVIA-WEB, ver M3/M5).
+- ✅ **Smoke-test parcial no simulador (0.3.1, 14/07):**
+  - **Item 1 ✓** — offline nativo: relaunch mostrou "Sem conexão — reconectando…"
+    e **entrou sozinho** sem clique (auto-retry ok).
+  - **Item 2 ✓** — cookie **persistiu** após `simctl terminate` + relaunch (a
+    dúvida do WKWebView está respondida: entra logado direto).
+  - **Item 3 ~** — 2 ciclos completos de chat com a Anna (raciocínio 17 s +
+    resposta 370 tok @ 19,9 tok/s, spinner/timer ao vivo = render progressivo);
+    a confirmação literal token-a-token ficou bloqueada pelo bug de layout abaixo.
+  - **Item 4 ~** — botão "ouvir" presente; áudio precisa de ouvido humano.
+  - **Itens 5–7** (mic, anexos, links externos) pendentes — precisam de humano.
+- 🐞 **BUG BLOQUEADOR (é no SHVIA-WEB, não na casca)** — no iPhone 17 Pro Max
+  (440 pt) o painel do meio ("Selecione um projeto"/HISTÓRICO) fica **preso
+  aberto** por cima do chat em portrait, e o **hit-testing fica deslocado ~400 px
+  do render** (toques "mortos": long-press no compositor seleciona item do
+  drawer que renderiza 400 px acima). Em landscape os 3 painéis espremem o
+  thread a ~40 px de altura e a lista não rola até a mensagem nova. Junta-se à
+  **safe-area** (topbar sob a status bar/Dynamic Island). Hipótese: breakpoint
+  não trata 440 pt como mobile + `viewport-fit`/`env(safe-area-inset-*)`.
+  Smoke-test itens 3/8/9 só fecham depois desse fix (M5 "sobras" cresceu).
+- Quirk de teste (não é bug do app): teclado de hardware do simulador não digita
+  no campo do chat (WKWebView); **colar** (long-press → Paste) funciona. Testar
+  teclado virtual em aparelho físico.
 - Depois do smoke-test: primeiro build no **TestFlight**.
 
 ### M3 — Valor nativo (destrava App Store 4.2)
@@ -98,10 +116,12 @@ Pré-requisito de qualidade p/ submeter.
 ## 5. Estado
 
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
-  0.3.0: `gen/apple` no repo e app rodando logado no simulador — falta o
-  checklist completo do smoke-test) · [ ] M3 · [ ] M4 ·
-  [x] M5 (núcleo: topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4; sobras menores =
-  max-height de modais com teclado, faixa 720–768px)
-- **Próximo:** rodar o checklist do smoke-test iOS (§iOS itens 3–9) no simulador
-  que já está de pé, e resolver a safe-area da topbar (status bar/Dynamic
-  Island). Android on-device continua pendente (mesma sentada com aparelho USB).
+  0.3.1: `gen/apple` no repo, app logado no simulador, itens 1–2 do smoke-test ✓,
+  chat funcionando; itens 3/8/9 bloqueados por bug de layout do SHVIA-WEB) ·
+  [ ] M3 · [ ] M4 · [~] M5 (topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4, mas o
+  smoke-test iOS revelou sobras GRANDES: drawer preso + hit-offset ~400 px em
+  440 pt + safe-area — ver 🐞 no M2)
+- **Próximo:** fix do layout mobile no repo `SHVIA` (drawer/breakpoint 440 pt +
+  safe-area + hit-offset), aí fechar itens 3/8/9 no simulador e itens 4–7 com
+  humano (TTS/mic/anexos/links). Android on-device continua pendente (mesma
+  sentada com aparelho USB).
