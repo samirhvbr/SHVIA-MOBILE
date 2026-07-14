@@ -140,10 +140,14 @@ Pré-requisito de qualidade p/ submeter.
 ## 5. Estado
 
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
-  0.3.5: itens 1–3 e 8 do smoke-test ✓ no simulador com a 2.17.11 em produção,
-  item 9 portrait ok; faltam 4–7 com humano) · [ ] M3 · [ ] M4 ·
-  [~] M5 (2.17.11 matou o drawer-vidro/safe-area; sobras: auto-zoom no composer,
-  leve overflow horizontal em portrait, landscape segue desktop)
-- **Próximo:** itens 4–7 do smoke-test com humano (TTS/mic/anexos/links) e as
-  sobras do SHVIA-WEB acima. Depois: **TestFlight** (M2 final). Android
-  on-device continua pendente (mesma sentada com aparelho USB).
+  0.3.6: itens 1–3 e 8 do smoke-test ✓ no simulador, item 9 portrait ok;
+  faltam 4–7 com humano) · [ ] M3 · [ ] M4 ·
+  [~] M5 (2.17.11 drawer-vidro/safe-area ✓ · 2.17.12 auto-zoom do composer ✓
+  e topbar 2 linhas + versão visível · 2.17.13 fonte por usuário ·
+  **2.17.16 clip lateral ✓** — era min-width:auto nos itens da grade
+  .chat-area, #messages esticava a 687px/440; diagnóstico por badge injetado
+  pela casca no WKWebView. Sobra única: landscape segue layout desktop)
+- **Próximo:** itens 4–7 do smoke-test com humano (TTS/mic/anexos/links);
+  decidir se landscape-desktop é bug ou feature. Depois: **TestFlight**
+  (M2 final). Android on-device continua pendente (mesma sentada com
+  aparelho USB).
