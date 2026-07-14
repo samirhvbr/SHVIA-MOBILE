@@ -87,15 +87,21 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
     a confirmação literal token-a-token ficou bloqueada pelo bug de layout abaixo.
   - **Item 4 ~** — botão "ouvir" presente; áudio precisa de ouvido humano.
   - **Itens 5–7** (mic, anexos, links externos) pendentes — precisam de humano.
-- 🐞 **BUG BLOQUEADOR (é no SHVIA-WEB, não na casca)** — no iPhone 17 Pro Max
-  (440 pt) o painel do meio ("Selecione um projeto"/HISTÓRICO) fica **preso
-  aberto** por cima do chat em portrait, e o **hit-testing fica deslocado ~400 px
-  do render** (toques "mortos": long-press no compositor seleciona item do
-  drawer que renderiza 400 px acima). Em landscape os 3 painéis espremem o
-  thread a ~40 px de altura e a lista não rola até a mensagem nova. Junta-se à
-  **safe-area** (topbar sob a status bar/Dynamic Island). Hipótese: breakpoint
-  não trata 440 pt como mobile + `viewport-fit`/`env(safe-area-inset-*)`.
-  Smoke-test itens 3/8/9 só fecham depois desse fix (M5 "sobras" cresceu).
+- 🐞 **BUG BLOQUEADOR — CORRIGIDO no SHVIA-WEB 2.17.11 (14/07), aguardando
+  deploy.** Causa-raiz achada com o CSS de produção (md5 == repo): em ≤768 px o
+  painel do meio vira drawer `position:fixed` **default-aberto** com fundo
+  `--bg-panel` = rgba 2,5% → um **vidro invisível por cima do chat**. O
+  "hit-testing deslocado ~400 px" era isso: o chat aparecia ATRAVÉS do drawer,
+  mas os toques acertavam o drawer. Fix (validado em harness 440×956 com o CSS
+  real): drawer inicia FECHADO no mobile, fundo sólido `#11161e`, backdrop
+  toque-fora-fecha, chip "Projeto" da topbar abre/fecha (o stub de reabrir é
+  display:none no mobile — não havia porta), safe-area na topbar e no drawer
+  (a regra mobile antiga da topbar era letra morta: a base "pit-wall" vinha
+  depois no arquivo e vencia a cascata). Cadastro: iOS dava **zoom automático**
+  ao focar campo com fonte <16 px (o "corte lateral") → inputs a 16 px +
+  `viewport-fit=cover` + safe-area no layout auth. **Sobra conhecida:**
+  landscape (item 9) segue layout desktop (956 px de largura > breakpoint) —
+  avaliar `max-height` como critério de mobile depois do re-teste.
 - Quirk de teste (não é bug do app): teclado de hardware do simulador não digita
   no campo do chat (WKWebView); **colar** (long-press → Paste) funciona. Testar
   teclado virtual em aparelho físico.
@@ -121,7 +127,7 @@ Pré-requisito de qualidade p/ submeter.
   [ ] M3 · [ ] M4 · [~] M5 (topbar/colapso ok no SHVIA-WEB 2.15.3–2.15.4, mas o
   smoke-test iOS revelou sobras GRANDES: drawer preso + hit-offset ~400 px em
   440 pt + safe-area — ver 🐞 no M2)
-- **Próximo:** fix do layout mobile no repo `SHVIA` (drawer/breakpoint 440 pt +
-  safe-area + hit-offset), aí fechar itens 3/8/9 no simulador e itens 4–7 com
-  humano (TTS/mic/anexos/links). Android on-device continua pendente (mesma
-  sentada com aparelho USB).
+- **Próximo:** **deployar o SHVIA-WEB 2.17.11** (fix já commitado/pushado) e
+  re-rodar itens 3/8 no simulador (item 9 landscape tem sobra conhecida — ver
+  🐞 no M2); itens 4–7 com humano (TTS/mic/anexos/links). Android on-device
+  continua pendente (mesma sentada com aparelho USB).
