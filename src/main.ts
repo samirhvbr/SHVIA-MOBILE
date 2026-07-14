@@ -4,8 +4,10 @@
 // marca e navega para o ShvIA hospedado. Diferente do desktop, aqui a casca
 // VERIFICA o servidor antes de navegar: rede de celular falha o tempo todo, e
 // navegar às cegas estampa a tela de erro nativa do WebView. Fluxo:
-//   1. ping barato no /api/v1/health (no-cors: resposta opaca serve — só
-//      queremos saber se o servidor está alcançável; DNS/offline rejeita);
+//   1. ping barato no /up (health nativo do Laravel, ~30 ms; no-cors: resposta
+//      opaca serve — só queremos saber se o servidor está alcançável).
+//      NÃO usar /api/v1/health aqui: ele sonda os provedores de IA em série e
+//      em cache frio passa de 6 s → falso "offline" (visto em produção 14/07);
 //   2. alcançável → location.replace() (o splash não fica no histórico);
 //   3. falhou → estado "offline" com "Tentar agora" (e "Abrir mesmo assim"
 //      como escape, caso o ping falhe por outra razão que não a rede).
@@ -59,7 +61,7 @@ async function serverReachable(timeoutMs = 6000): Promise<boolean> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), timeoutMs);
   try {
-    await fetch(`${SHVIA_URL}/api/v1/health`, {
+    await fetch(`${SHVIA_URL}/up`, {
       mode: "no-cors",
       cache: "no-store",
       signal: ctl.signal,

@@ -102,6 +102,18 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   `viewport-fit=cover` + safe-area no layout auth. **Sobra conhecida:**
   landscape (item 9) segue layout desktop (956 px de largura > breakpoint) —
   avaliar `max-height` como critério de mobile depois do re-teste.
+- ✅ **2.17.11 deployado (14/07 ~11h)** — confirmado via `/api/v1/health`
+  (`version.app`). Chat em coluna única no iPhone, toques funcionando (Samir
+  digitou e conversou no simulador). Sobra nova: **auto-zoom do iOS ao focar o
+  composer do chat** (o fix de fonte 16 px da 2.17.11 cobriu o auth, não o
+  composer) — mesma correção, outro campo.
+- 🔧 **Falso "Sem conexão" resolvido na casca (0.3.4):** o ping de saúde saiu de
+  `/api/v1/health` (sonda 14 provedores em série; em cache frio >6 s = estourava
+  o timeout da casca) para o **`/up`** nativo do Laravel (~30 ms). Diagnóstico
+  completo no commit. Pendências do LADO SERVIDOR reveladas pelo health:
+  `redis: status error`, `gemini`/`perplexity` com `http_404` na sonda, e
+  (opcional) desacoplar a sonda pesada do request (cache maior/refresh em
+  background) para o health não depender do humor dos provedores.
 - Quirk de teste (não é bug do app): teclado de hardware do simulador não digita
   no campo do chat (WKWebView); **colar** (long-press → Paste) funciona. Testar
   teclado virtual em aparelho físico.
