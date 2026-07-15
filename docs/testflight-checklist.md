@@ -100,9 +100,17 @@ obrigatório** — não é mais opcional. (Distribuição privada via Business M
 pularia a 4.2, foi descartada por essa decisão.)
 
 **Valor nativo mínimo pra não bater na 4.2 (= M3):**
-  - [ ] Push (APNs) — o gancho mais forte de "não é só um site". **Reusar a infra
-        APNs da Blue3** (o BLUE3 já usa `.p8` KeyID/TeamID, App Group, flag
-        `APNS_PRODUCTION`; ver `BLUE3-INTRANET-MOBILE/docs/.../SERVICOS_ESPORTES.md`)
+  - [ ] Push (APNs) — o gancho mais forte de "não é só um site". **Reuso concreto
+        da Blue3:** o BLUE3 usa **APNs token-based** (`.p8` + KeyID + TeamID via
+        `firebase/php-jwt` ES256, sem certificado). A **`.p8` é por CONTA Apple
+        (Team ID), não por app** → como o ShvIA usa o mesmo Team `S65UBCTPN5`, **a
+        MESMA chave serve**; só muda o `APNS_BUNDLE_ID` p/ `cloud.blue3.shvia`.
+        Cruza 3 pontos: (a) shell Tauri — entitlement `aps-environment` + App Group
+        + registrar/receber device token; (b) **SHVIA-WEB** — endpoint p/ guardar o
+        token + envio APNs (ES256, espelhar o do sys BLUE3); (c) a `.p8` em mãos
+        (com o Samir / gerar em developer.apple.com ▸ Keys). Refs:
+        `BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md` (D9, .env APNS_*)
+        e `docs/MOBILE/SERVICOS_ESPORTES.md`.
   - [ ] Deep-link `shvia://` + Universal Links (abre conversa/projeto direto)
   - [ ] Biometria (Face ID) pra desbloquear o app / re-login
   - [x] Câmera + microfone (já declarados/usados)
