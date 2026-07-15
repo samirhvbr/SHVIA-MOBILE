@@ -125,13 +125,13 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   teclado virtual em aparelho físico.
 - Depois do smoke-test: primeiro build no **TestFlight**.
 
-### M3 — Valor nativo (destrava App Store 4.2 — SÓ se for pra loja pública)
+### M3 — Valor nativo (destrava App Store 4.2) — **OBRIGATÓRIO (decisão 15/07)**
 Push (APNs), biometria (Face ID), compartilhar, deep-link `shvia://`, tela offline
-nativa, safe-area/status bar/splash. **Insight (15/07): 4.2 só morde na loja
-PÚBLICA.** TestFlight interno (≤100 testers da equipe) NÃO passa por essa review, e
-como o ShvIA é app **corporativo interno**, distribuir via **Apple Business Manager**
-(privado/não-listado) pula a 4.2 quase inteira → o M3 vira opcional. Decisão de
-produto (loja pública × distribuição privada) pendente do Samir. Ver checklist §2.1.
+nativa, safe-area/status bar/splash. **Samir escolheu o Caminho B — App Store PÚBLICA,
+mesmo trilho do `~/x/BLUE3-INTRANET-MOBILE`** (`app-store-connect`, conta S65UBCTPN5,
+custo zero novo). Como o BLUE3 é Flutter NATIVO ele passou a 4.2 fácil; o ShvIA é
+**shell fino (wrapper) → a 4.2 se aplica**, então o M3 deixa de ser opcional. Push =
+reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
 
 ### M4 — Publicação nas lojas → **checklist executável em [../docs/testflight-checklist.md](../docs/testflight-checklist.md)**
 Doc criado (15/07) em 2 partes: **Parte 1 = TestFlight interno** (fecha o M2, sem

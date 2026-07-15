@@ -84,25 +84,32 @@ verdade, e só depois decidir o caminho da loja. As duas partes abaixo refletem 
 
 ## Parte 2 — App Store pública (M4, quando for a hora)
 
-### 2.1 A barreira: regra 4.2 (Minimum Functionality) — e o atalho
-Um app que "só abre um site" é reprovado (4.2 / 4.3 spam). **Dois caminhos:**
+### 2.1 DECISÃO (15/07): Caminho B — App Store pública, igual ao BLUE3-INTRANET-MOBILE
+**Samir decidiu**: mesmo trilho do app Flutter da Blue3, que publica na **App Store
+pública** via `method: app-store-connect` na conta **`S65UBCTPN5`** (confirmado no
+`~/x/BLUE3-INTRANET-MOBILE/docs/Runner .../ExportOptions.plist`). **Sem custo novo:**
+a conta Apple Developer paga da Blue3 já cobre todos os apps da organização.
+Detalhe reusável dali: `manageAppVersionAndBuildNumber: true` (Xcode cuida do build
+number → resolve o gotcha do §1.3) e `signingStyle: automatic`, `teamID S65UBCTPN5`.
 
-- **Caminho A — distribuição privada (RECOMENDADO pra app interno da Blue3).**
-  Como o ShvIA é assistente **corporativo interno**, publicar via **Apple Business
-  Manager** (Custom App / distribuição não-listada) entrega direto aos
-  colaboradores **sem a review pública de 4.2**. É o caminho mais curto pra chegar
-  nos usuários reais da Blue3. **Decisão de produto pendente do Samir.**
-- **Caminho B — loja pública aberta.** Aí precisa do **valor nativo do M3** pra
-  não bater na 4.2:
-  - [ ] Push (APNs) — o gancho nativo mais forte de "não é só um site"
-  - [x] Câmera + microfone (já declarados/usados)
+⚠️ **PORÉM — o precedente do BLUE3 não elimina a 4.2 pro ShvIA.** O BLUE3 é **Flutter
+nativo** (push, secure storage, Live Activities) → passou pela 4.2 sem esforço porque
+NÃO é web-wrapper. O ShvIA é **shell fino** (WebView do site) → **a regra 4.2 SE
+APLICA a ele**. Logo, ir pra App Store pública **torna o M3 (valor nativo)
+obrigatório** — não é mais opcional. (Distribuição privada via Business Manager, que
+pularia a 4.2, foi descartada por essa decisão.)
+
+**Valor nativo mínimo pra não bater na 4.2 (= M3):**
+  - [ ] Push (APNs) — o gancho mais forte de "não é só um site". **Reusar a infra
+        APNs da Blue3** (o BLUE3 já usa `.p8` KeyID/TeamID, App Group, flag
+        `APNS_PRODUCTION`; ver `BLUE3-INTRANET-MOBILE/docs/.../SERVICOS_ESPORTES.md`)
+  - [ ] Deep-link `shvia://` + Universal Links (abre conversa/projeto direto)
   - [ ] Biometria (Face ID) pra desbloquear o app / re-login
-  - [ ] Deep-link `shvia://` + Universal Links
-  - [ ] Tela offline nativa (a casca já tem a tarja + auto-retry)
+  - [x] Câmera + microfone (já declarados/usados)
+  - [~] Tela offline nativa (a casca já tem a tarja + auto-retry — reforçar)
   - [ ] Compartilhar (share sheet) recebendo conteúdo de outros apps
-  - Na review, **descrever esses recursos nativos nas notas** e (se possível) dar
-    conta de teste, deixando claro que é ferramenta corporativa, não um webview
-    genérico.
+  - Na review, **descrever esses recursos nativos nas notas** + conta de teste,
+    deixando claro que é ferramenta corporativa, não um webview genérico.
 
 ### 2.2 Ficha na loja `[ASC]`
 - [ ] Nome, subtítulo, descrição, palavras-chave, categoria (productivity)
