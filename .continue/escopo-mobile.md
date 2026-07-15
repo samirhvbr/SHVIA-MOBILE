@@ -146,9 +146,10 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
-- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
-  0.3.6: itens 1–3 e 8 do smoke-test ✓ no simulador, item 9 portrait ok;
-  faltam 4–7 com humano) · [ ] M3 · [ ] M4 ·
+- [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [x] **M2 FECHADO 🎉**
+  (15/07: app instalado e RODANDO no iPhone físico via TestFlight interno, build
+  0.3.13/casca 0.3.14; smoke 1–3, 8, 9-portrait ✓ no simulador; itens 4–7
+  TTS/mic/anexos/links agora dá pra fechar NO APARELHO REAL) · [ ] M3 · [ ] M4 ·
   [x] M5 (2.17.11 drawer-vidro/safe-area ✓ · 2.17.12 auto-zoom do composer ✓
   e topbar 2 linhas + versão visível · 2.17.13 fonte por usuário ·
   **2.17.16 clip lateral ✓** — era min-width:auto nos itens da grade
@@ -165,8 +166,11 @@ Pré-requisito de qualidade p/ submeter.
   confirmada: portrait (390×844) e desktop (1280×800) idênticos. **2.19.2
   DEPLOYADA (15/07)** — confirmado: `/api/v1/health` version.app=2.19.2 e os
   assets em produção têm o gatilho (CSS 17× / JS 3× `max-height: 480px`).
-- **Próximo:** reconferir landscape no simulador (item 9) agora que a 2.19.2 está
-  no ar; itens 4–7 do smoke-test com humano (TTS/mic/anexos/links). Depois:
-  **TestFlight interno** (fecha o M2 — NÃO passa por review 4.2; roteiro completo em
-  [../docs/testflight-checklist.md](../docs/testflight-checklist.md)). Android
-  on-device continua pendente (mesma sentada com aparelho USB).
+- **Próximo (M2 já fechado):** fechar smoke-test itens 4–7 (TTS/mic/anexos/links)
+  AGORA no iPhone físico via TestFlight — mic/câmera reais que o simulador fingia.
+  Depois: **M3 (valor nativo)** rumo à loja pública (push APNs reusando a .p8 da
+  Blue3, deep-link, biometria — ver checklist §2.1). Android on-device pendente.
+  **Gotchas da 1ª submissão iOS documentados** em
+  [../docs/testflight-checklist.md](../docs/testflight-checklist.md): buildar SÓ
+  pelo terminal (Xcode GUI = `npm: command not found`), ícone 1024 sem canal alpha
+  (`magick -alpha remove`), upload via Transporter, teste interno não usa código.
