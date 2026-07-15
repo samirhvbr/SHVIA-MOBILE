@@ -142,12 +142,22 @@ Pré-requisito de qualidade p/ submeter.
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [~] M2 (**foco atual**;
   0.3.6: itens 1–3 e 8 do smoke-test ✓ no simulador, item 9 portrait ok;
   faltam 4–7 com humano) · [ ] M3 · [ ] M4 ·
-  [~] M5 (2.17.11 drawer-vidro/safe-area ✓ · 2.17.12 auto-zoom do composer ✓
+  [x] M5 (2.17.11 drawer-vidro/safe-area ✓ · 2.17.12 auto-zoom do composer ✓
   e topbar 2 linhas + versão visível · 2.17.13 fonte por usuário ·
   **2.17.16 clip lateral ✓** — era min-width:auto nos itens da grade
   .chat-area, #messages esticava a 687px/440; diagnóstico por badge injetado
-  pela casca no WKWebView. Sobra única: landscape segue layout desktop)
-- **Próximo:** itens 4–7 do smoke-test com humano (TTS/mic/anexos/links);
-  decidir se landscape-desktop é bug ou feature. Depois: **TestFlight**
-  (M2 final). Android on-device continua pendente (mesma sentada com
-  aparelho USB).
+  pela casca no WKWebView · **2.19.2 landscape ✓** — ver abaixo)
+- **DECISÃO landscape (15/07): é BUG p/ telefone, FEATURE p/ tablet.** O gatilho
+  mobile era só `max-width` (768px); deitado o iPhone tem ~932px de largura e
+  caía nas 3 colunas de desktop (sidebar 320px comendo a tela, thread com ~268px
+  de altura útil). Fix (SHVIA-WEB **2.19.2**, validado em harness 932×430 com o
+  CSS/JS reais): adicionado `(max-height: 480px)` como 2º gatilho de mobile aos
+  17 blocos `@media` (8×768 + 9×720) e aos 3 `matchMedia` do app.js. 480px
+  separa telefone-deitado (~430px alto) de tablet-deitado (iPad landscape
+  744–834px) — **iPad em paisagem segue em colunas de propósito**. Não-regressão
+  confirmada: portrait (390×844) e desktop (1280×800) idênticos. **Falta deploy
+  da 2.19.2** p/ re-testar o item 9 landscape no simulador.
+- **Próximo:** deployar **SHVIA-WEB 2.19.2** e reconferir landscape no simulador;
+  itens 4–7 do smoke-test com humano (TTS/mic/anexos/links). Depois:
+  **TestFlight** (M2 final). Android on-device continua pendente (mesma sentada
+  com aparelho USB).
