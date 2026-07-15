@@ -155,9 +155,10 @@ Pré-requisito de qualidade p/ submeter.
   17 blocos `@media` (8×768 + 9×720) e aos 3 `matchMedia` do app.js. 480px
   separa telefone-deitado (~430px alto) de tablet-deitado (iPad landscape
   744–834px) — **iPad em paisagem segue em colunas de propósito**. Não-regressão
-  confirmada: portrait (390×844) e desktop (1280×800) idênticos. **Falta deploy
-  da 2.19.2** p/ re-testar o item 9 landscape no simulador.
-- **Próximo:** deployar **SHVIA-WEB 2.19.2** e reconferir landscape no simulador;
-  itens 4–7 do smoke-test com humano (TTS/mic/anexos/links). Depois:
+  confirmada: portrait (390×844) e desktop (1280×800) idênticos. **2.19.2
+  DEPLOYADA (15/07)** — confirmado: `/api/v1/health` version.app=2.19.2 e os
+  assets em produção têm o gatilho (CSS 17× / JS 3× `max-height: 480px`).
+- **Próximo:** reconferir landscape no simulador (item 9) agora que a 2.19.2 está
+  no ar; itens 4–7 do smoke-test com humano (TTS/mic/anexos/links). Depois:
   **TestFlight** (M2 final). Android on-device continua pendente (mesma sentada
   com aparelho USB).
