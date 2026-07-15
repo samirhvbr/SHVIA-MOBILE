@@ -9,5 +9,10 @@
     <string>O microfone é usado para ditar mensagens por voz no chat.</string>
     <key>NSCameraUsageDescription</key>
     <string>A câmera é usada para tirar fotos e anexá-las ao chat.</string>
+    <!-- Conformidade de exportação: o app só usa HTTPS/TLS padrão do sistema
+         (tráfego pro ia.blue3.com.br), que é criptografia isenta. Declarar aqui
+         evita a pergunta manual a CADA upload no TestFlight/App Store Connect. -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
   </dict>
 </plist>

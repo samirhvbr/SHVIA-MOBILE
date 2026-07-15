@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Privacy manifest do ShvIA Mobile (obrigatório pela Apple desde 05/2024).
+
+  O app é um SHELL FINO first-party: WKWebView carregando ia.blue3.com.br.
+  Não há SDK de anúncio/analytics de terceiros no BINÁRIO, então:
+    - NSPrivacyTracking = false (não rastreia entre apps/sites de terceiros)
+    - NSPrivacyTrackingDomains vazio
+    - NSPrivacyCollectedDataTypes vazio — o app em si não coleta; os dados que o
+      usuário digita vão pro servidor Blue3 (first-party), declarados no
+      "nutrition label" do App Store Connect, não aqui.
+    - NSPrivacyAccessedAPITypes: só a categoria UserDefaults, que o runtime/
+      WKWebView toca. Razão CA92.1 = acesso a dados só do próprio app.
+
+  ⚠️ Na 1ª submissão a Apple envia e-mail se detectar uso de OUTRA required-reason
+  API sem declaração (ex.: FileTimestamp C617.1, SystemBootTime 35F9.1,
+  DiskSpace E174.1) — adicionar o bloco correspondente e reenviar. Ver checklist.
+-->
+<plist version="1.0">
+  <dict>
+    <key>NSPrivacyTracking</key>
+    <false/>
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array/>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+      <dict>
+        <key>NSPrivacyAccessedAPIType</key>
+        <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+        <key>NSPrivacyAccessedAPITypeReasons</key>
+        <array>
+          <string>CA92.1</string>
+        </array>
+      </dict>
+    </array>
+  </dict>
+</plist>

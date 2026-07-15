@@ -125,13 +125,20 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
   teclado virtual em aparelho físico.
 - Depois do smoke-test: primeiro build no **TestFlight**.
 
-### M3 — Valor nativo (destrava App Store 4.2)
-Push (FCM/APNs), biometria, compartilhar, deep-link `shvia://`, tela offline nativa,
-safe-area/status bar/splash. Melhora UX e justifica o app além do wrapper.
+### M3 — Valor nativo (destrava App Store 4.2 — SÓ se for pra loja pública)
+Push (APNs), biometria (Face ID), compartilhar, deep-link `shvia://`, tela offline
+nativa, safe-area/status bar/splash. **Insight (15/07): 4.2 só morde na loja
+PÚBLICA.** TestFlight interno (≤100 testers da equipe) NÃO passa por essa review, e
+como o ShvIA é app **corporativo interno**, distribuir via **Apple Business Manager**
+(privado/não-listado) pula a 4.2 quase inteira → o M3 vira opcional. Decisão de
+produto (loja pública × distribuição privada) pendente do Samir. Ver checklist §2.1.
 
-### M4 — Publicação nas lojas
-Listings, `PrivacyInfo` (iOS) / data-safety (Play), screenshots, submissão/review.
-Release local (Android no Linux, iOS no Mac) ou runner macOS de CI só p/ iOS.
+### M4 — Publicação nas lojas → **checklist executável em [../docs/testflight-checklist.md](../docs/testflight-checklist.md)**
+Doc criado (15/07) em 2 partes: **Parte 1 = TestFlight interno** (fecha o M2, sem
+4.2) e **Parte 2 = App Store pública** (4.2, nutrition label, screenshots). Já
+adiantado do Linux (mobile 0.3.11): `PrivacyInfo.xcprivacy` (sem tracking,
+UserDefaults CA92.1), `ITSAppUsesNonExemptEncryption=false`, `minimumSystemVersion
+14.0` + `category productivity`. Falta o lado Mac (build/upload) e itens `[ASC]`.
 
 ### M5 — Responsividade mobile do ShvIA web (repo `SHVIA`)
 `viewport`, `env(safe-area-inset-*)`, teclado, nav/sidebar colapsável, alvos de toque.
@@ -160,5 +167,6 @@ Pré-requisito de qualidade p/ submeter.
   assets em produção têm o gatilho (CSS 17× / JS 3× `max-height: 480px`).
 - **Próximo:** reconferir landscape no simulador (item 9) agora que a 2.19.2 está
   no ar; itens 4–7 do smoke-test com humano (TTS/mic/anexos/links). Depois:
-  **TestFlight** (M2 final). Android on-device continua pendente (mesma sentada
-  com aparelho USB).
+  **TestFlight interno** (fecha o M2 — NÃO passa por review 4.2; roteiro completo em
+  [../docs/testflight-checklist.md](../docs/testflight-checklist.md)). Android
+  on-device continua pendente (mesma sentada com aparelho USB).
