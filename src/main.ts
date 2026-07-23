@@ -20,6 +20,13 @@
 // offline — pra estilizar o splash sem ser redirecionado (sem auto-retry).
 
 import { version } from "../package.json";
+import {
+  authenticate,
+  checkStatus,
+  BiometryType,
+  type Status,
+  type AuthOptions,
+} from "@tauri-apps/plugin-biometric";
 
 // URL do servidor ShvIA (fonte da verdade).
 const SHVIA_URL = "https://ia.blue3.com.br";
@@ -33,6 +40,145 @@ const forceEl = document.getElementById("force-open");
 
 // "?hold" = modo de estilização: nenhum timer/navegação automática.
 const holdMode = new URLSearchParams(window.location.search).has("hold");
+
+// ── Trava biométrica (M3/ADR-002) ─────────────────────────────────────────
+// Gate LOCAL de Face ID/Touch ID antes de navegar pro ShvIA remoto. Roda só
+// aqui, na página local — a única com bridge nativo (a página remota NÃO recebe
+// comando, ADR-001). Não substitui o cookie de sessão same-origin: é
+// conveniência/segurança LOCAL, espelhando o BLUE3-INTRANET-MOBILE.
+const BIO_KEY = "shvia_biometric"; // localStorage: "on" | "off" | (ausente = 1ª vez)
+
+const lockEl = document.getElementById("lock") as HTMLElement;
+const lockTitleEl = document.getElementById("lock-title")!;
+const lockMsgEl = document.getElementById("lock-msg")!;
+const lockPrimaryEl = document.getElementById("lock-primary") as HTMLButtonElement;
+const lockSecondaryEl = document.getElementById("lock-secondary") as HTMLButtonElement;
+
+function showLock(
+  mode: "optin" | "lock",
+  o: { title: string; msg: string; primary: string; secondary: string; hideSecondary?: boolean },
+): void {
+  lockEl.dataset.mode = mode;
+  lockTitleEl.textContent = o.title;
+  lockMsgEl.textContent = o.msg;
+  lockPrimaryEl.textContent = o.primary;
+  lockSecondaryEl.textContent = o.secondary;
+  lockSecondaryEl.hidden = o.hideSecondary ?? false;
+  lockEl.hidden = false;
+}
+
+function authOpts(name: string): AuthOptions {
+  return {
+    allowDeviceCredential: true, // cai no passcode do aparelho se a biometria falhar
+    fallbackTitle: "Usar senha do aparelho",
+    title: "ShvIA", // Android
+    subtitle: `Desbloqueio por ${name}`,
+    confirmationRequired: false,
+  };
+}
+
+// 1ª execução: oferece ativar. "Ativar" confirma com uma autenticação real
+// (garante que está enrolado no aparelho) antes de persistir "on".
+function runOptIn(name: string): Promise<void> {
+  return new Promise((resolve) => {
+    showLock("optin", {
+      title: `Proteger o ShvIA com ${name}?`,
+      msg: `Desbloqueie o app com ${name}, sem digitar a senha a cada acesso. Dá pra mudar depois.`,
+      primary: `Ativar ${name}`,
+      secondary: "Agora não",
+    });
+    lockPrimaryEl.onclick = async () => {
+      try {
+        await authenticate(`Confirme para ativar o ${name}`, authOpts(name));
+        localStorage.setItem(BIO_KEY, "on");
+        lockEl.hidden = true;
+        resolve();
+      } catch {
+        lockMsgEl.textContent = `Não deu pra confirmar o ${name}. Tente de novo, ou siga sem bloqueio.`;
+      }
+    };
+    lockSecondaryEl.onclick = () => {
+      localStorage.setItem(BIO_KEY, "off");
+      lockEl.hidden = true;
+      resolve();
+    };
+  });
+}
+
+// Cold-start com trava ativa: auto-prompta; se falhar, revela "Desativar
+// bloqueio" (que TAMBÉM exige autenticar — senão qualquer um desligaria a trava).
+function runLock(name: string): Promise<void> {
+  return new Promise((resolve) => {
+    const tryUnlock = async () => {
+      try {
+        await authenticate(`Desbloqueie o ShvIA com ${name}`, authOpts(name));
+        lockEl.hidden = true;
+        resolve();
+      } catch {
+        lockMsgEl.textContent = "Não desbloqueou. Toque em Desbloquear pra tentar de novo.";
+        lockSecondaryEl.hidden = false;
+      }
+    };
+    showLock("lock", {
+      title: "ShvIA bloqueado",
+      msg: `Use o ${name} para desbloquear.`,
+      primary: "Desbloquear",
+      secondary: "Desativar bloqueio",
+      hideSecondary: true,
+    });
+    lockPrimaryEl.onclick = () => void tryUnlock();
+    lockSecondaryEl.onclick = async () => {
+      try {
+        await authenticate("Confirme para desativar o bloqueio", authOpts(name));
+        localStorage.setItem(BIO_KEY, "off");
+        lockEl.hidden = true;
+        resolve();
+      } catch {
+        lockMsgEl.textContent = "Não foi possível desativar. Toque em Desbloquear.";
+      }
+    };
+    void tryUnlock(); // padrão nativo: prompta assim que a tela abre
+  });
+}
+
+// Resolve quando pode seguir pro ShvIA: destravado, OU biometria off/ausente no
+// aparelho. Com a trava ativa, nunca resolve sem auth — em falha re-prompta (fica
+// na tela), então proceedToShvia só navega no resolve.
+async function biometricGate(): Promise<void> {
+  const pref = localStorage.getItem(BIO_KEY);
+  if (pref === "off") return;
+
+  let status: Status;
+  try {
+    status = await checkStatus();
+  } catch {
+    return; // sem bridge nativo (dev no navegador/desktop) → não trava
+  }
+  if (!status.isAvailable) return; // aparelho sem biometria → não trava
+
+  const name =
+    status.biometryType === BiometryType.FaceID
+      ? "Face ID"
+      : status.biometryType === BiometryType.TouchID
+        ? "Touch ID"
+        : "biometria";
+
+  if (pref === null) {
+    await runOptIn(name);
+    return;
+  }
+  await runLock(name); // pref === "on"
+}
+
+let navigating = false;
+// Navegação única pro ShvIA, atrás do gate biométrico. Guard: se o auto-retry e
+// o evento `online` dispararem juntos, só o primeiro gateia/navega.
+async function proceedToShvia(): Promise<void> {
+  if (navigating) return;
+  navigating = true;
+  await biometricGate();
+  window.location.replace(SHVIA_URL);
+}
 
 let autoRetryTimer: number | undefined;
 let checking = false;
@@ -83,7 +229,7 @@ async function autoCheck(): Promise<void> {
   const ok = await serverReachable();
   checking = false;
   if (ok) {
-    window.location.replace(SHVIA_URL);
+    void proceedToShvia();
     return;
   }
   if (rootEl.dataset.state === "offline") {
@@ -95,7 +241,7 @@ async function autoCheck(): Promise<void> {
 async function connect(): Promise<void> {
   setState("connecting");
   if (await serverReachable()) {
-    window.location.replace(SHVIA_URL);
+    void proceedToShvia();
     return;
   }
   setState("offline");
@@ -111,7 +257,7 @@ window.addEventListener("DOMContentLoaded", () => {
     void connect();
   });
   forceEl?.addEventListener("click", () => {
-    window.location.replace(SHVIA_URL);
+    void proceedToShvia();
   });
   // Rede voltou (evento do SO/navegador) → tenta na hora, sem esperar os 5 s.
   window.addEventListener("online", () => {

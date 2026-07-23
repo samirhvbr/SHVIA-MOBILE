@@ -133,6 +133,23 @@ custo zero novo). Como o BLUE3 é Flutter NATIVO ele passou a 4.2 fácil; o ShvI
 **shell fino (wrapper) → a 4.2 se aplica**, então o M3 deixa de ser opcional. Push =
 reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
 
+**Progresso (ADR-002 — sequência por tratabilidade, não por impacto):**
+- [x] **Biometria (Face ID / Touch ID) — mobile 0.4.0 (16/07).** `tauri-plugin-biometric`
+  como plugin **mobile-only** (`[target.'cfg(ios/android)']` + registro atrás de
+  `#[cfg(mobile)]`; capability `mobile.json` escopada a iOS/Android — declarar no
+  `default` quebraria o build host). Gate na casca **LOCAL** (`src/main.ts`, a única
+  com bridge nativo): opt-in na 1ª execução, desbloqueio no cold-start antes de
+  navegar pro remoto, "Desativar bloqueio" exige re-autenticar; `NSFaceIDUsageDescription`
+  no `Info.ios.plist`; passcode do aparelho como fallback. **Não** substitui o cookie
+  de sessão (é acesso LOCAL, modelo Blue3). **Verificado no host:** `cargo check`
+  (host **e** `aarch64-apple-ios`) + `tsc`/`vite build` passam. **Pendente:** Face ID
+  real no simulador/aparelho (novo item do smoke-test — só se valida com device).
+- [ ] **Push (APNs)** — bloqueado em recurso externo (Samir): `.p8` + capability Push +
+  App Group + entitlement no portal, **e** endpoint no SHVIA-WEB (guardar token + enviar).
+- [ ] **Universal Links** — bloqueado em `apple-app-site-association` no SHVIA-WEB +
+  entitlement `associated-domains`.
+- [~] Câmera+mic (feito) · tela offline nativa (feita).
+
 ### M4 — Publicação nas lojas → **checklist executável em [../docs/testflight-checklist.md](../docs/testflight-checklist.md)**
 Doc criado (15/07) em 2 partes: **Parte 1 = TestFlight interno** (fecha o M2, sem
 4.2) e **Parte 2 = App Store pública** (4.2, nutrition label, screenshots). Já

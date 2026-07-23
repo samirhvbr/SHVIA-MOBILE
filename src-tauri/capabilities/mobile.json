@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "Permissões só-mobile do ShvIA (M3/ADR-002). Escopada a iOS/Android: o plugin de biometria é `#![cfg(mobile)]` e não existe no host — declarar `biometric:default` no `default` quebraria o `cargo check`/build desktop.",
+  "platforms": ["iOS", "android"],
+  "windows": ["main"],
+  "permissions": ["biometric:default"]
+}

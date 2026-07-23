@@ -19,6 +19,7 @@
 | 7 | **Links externos** | Link fora de `*.blue3.com.br` abre no **navegador do sistema**, não dentro do app |
 | 8 | **Teclado virtual** | Compositor não fica coberto pelo teclado; safe-area ok (notch/gesto) |
 | 9 | **Rotação** | Paisagem não quebra o layout (a topbar rola na horizontal) |
+| 10 | **Biometria (Face ID/Touch ID)** ⭐M3 | **1ª execução:** card "Proteger o ShvIA com Face ID?" → **Ativar** dispara o prompt do SO → sucesso entra no ShvIA. **Reabrir (cold-start):** prompt do Face ID **auto-abre**; sucesso → entra; falha → "Desbloquear" tenta de novo e aparece "Desativar bloqueio" (que **re-pede** biometria). **Agora não** na 1ª vez → nunca mais pergunta. No simulador: enrolar Face (Features ▸ Face ID ▸ Enrolled) e usar Matching/Non-matching Face. Sem biometria no aparelho → entra direto (sem trava) |
 
 Anotar resultado por plataforma no [.continue/escopo-mobile.md](../.continue/escopo-mobile.md) §Estado.
 

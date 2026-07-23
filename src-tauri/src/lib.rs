@@ -53,8 +53,19 @@ fn is_internal(url: &tauri::Url) -> bool {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
+    #[allow(unused_mut)] // no host o bloco `#[cfg(mobile)]` some → `mut` não usado
+    let mut builder = tauri::Builder::default().plugin(tauri_plugin_opener::init());
+
+    // Biometria (M3/ADR-002): plugin **mobile-only** — o crate é `#![cfg(mobile)]`
+    // e nem existe no host (por isso o registro fica atrás de `#[cfg(mobile)]`).
+    // Expõe `authenticate`/`status` à página LOCAL (`src/`), que faz o gate Face
+    // ID antes de navegar pro ShvIA remoto. A página remota segue sem acesso nativo.
+    #[cfg(mobile)]
+    {
+        builder = builder.plugin(tauri_plugin_biometric::init());
+    }
+
+    builder
         .setup(|app| {
             let handle = app.handle().clone();
             WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))

@@ -112,7 +112,9 @@ pularia a 4.2, foi descartada por essa decisão.)
         `BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md` (D9, .env APNS_*)
         e `docs/MOBILE/SERVICOS_ESPORTES.md`.
   - [ ] Deep-link `shvia://` + Universal Links (abre conversa/projeto direto)
-  - [ ] Biometria (Face ID) pra desbloquear o app / re-login
+  - [x] **Biometria (Face ID/Touch ID) — mobile 0.4.0, build-verified.** Gate local
+        (opt-in 1ª execução + lock no cold-start) via `tauri-plugin-biometric`. Falta
+        só o smoke-test on-device (Face ID real). Ver ADR-002 e escopo M3.
   - [x] Câmera + microfone (já declarados/usados)
   - [~] Tela offline nativa (a casca já tem a tarja + auto-retry — reforçar)
   - [ ] Compartilhar (share sheet) recebendo conteúdo de outros apps

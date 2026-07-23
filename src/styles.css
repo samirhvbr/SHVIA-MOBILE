@@ -229,3 +229,108 @@ body {
     transition: none;
   }
 }
+
+/* ── Trava biométrica (M3/ADR-002) ───────────────────────────────
+   Overlay full-screen opaco (mesmo fundo do splash → sem "pulo" de cor).
+   `.lock[hidden]` precisa vencer o `display:flex` (a especificidade de
+   [hidden] já ganha). */
+.lock {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(140vmin 90vmin at 50% 34%, rgba(52, 179, 236, 0.07), transparent 68%),
+    var(--bg);
+}
+
+.lock[hidden] {
+  display: none;
+}
+
+.lock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.lock-mark {
+  border-radius: 24px;
+  filter: drop-shadow(0 14px 36px rgba(3, 8, 14, 0.5));
+}
+
+.lock-card h2 {
+  margin: 6px 0 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.lock-card p {
+  margin: 0;
+  color: var(--tx-dim);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.lock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.lock-actions button {
+  font: 600 1rem/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 48px; /* alvo de toque confortável */
+  padding: 0 24px;
+  border-radius: 12px;
+  background: var(--azure);
+  border: 1px solid var(--azure);
+  color: #04121c;
+  cursor: pointer;
+  transition: background 150ms ease-out;
+}
+
+.lock-actions button:active {
+  background: var(--azure-strong);
+}
+
+.lock-actions button:focus-visible {
+  outline: 2px solid var(--azure-strong);
+  outline-offset: 2px;
+}
+
+.lock-actions button.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--tx-dim);
+  font-weight: 500;
+  font-size: 0.85rem;
+  min-height: 40px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lock-actions button.ghost:active {
+  background: transparent;
+  color: var(--tx);
+}
+
+.lock-actions button[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lock-actions button {
+    transition: none;
+  }
+}
