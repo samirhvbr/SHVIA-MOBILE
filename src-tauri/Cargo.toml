@@ -1,6 +1,6 @@
 [package]
 name = "shvia-mobile"
-version = "0.4.0"
+version = "0.5.0"
 description = "ShvIA Mobile — cliente iOS/Android do ShvIA (shell fino Tauri 2)"
 authors = ["Samir Hanna Verza <samirhv@me.com>"]
 edition = "2021"
@@ -18,7 +18,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
-# Abre links externos (fora de *.blue3.com.br) no navegador do SO. Suporta mobile.
+# Abre links externos (fora dos hosts de SERVER_HOSTS em src/lib.rs) no navegador do SO. Suporta mobile.
 tauri-plugin-opener = "2"
 
 # Pin de compatibilidade (não usamos `time` diretamente): o WebView (wry → cookie

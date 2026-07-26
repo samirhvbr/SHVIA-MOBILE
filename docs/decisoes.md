@@ -8,7 +8,7 @@ Formato ADR. Não relitigar direção já decidida dentro de um how-to — linka
 
 - **Data:** 07/07/2026 · **Status:** Aceito
 - **Contexto:** Levar o ShvIA para **iOS + Android**. O desktop (`SHVIA-DESKTOP`)
-  já é Tauri 2 (shell fino que carrega `ia.blue3.com.br`). A Blue3 **já publica**
+  já é Tauri 2 (shell fino que carrega `ai.shvia.org`). A Blue3 **já publica**
   app mobile em Flutter (`BLUE3-INTRANET-MOBILE`) — então conta Apple, Play Console,
   custódia de keystore e know-how de review **já existem**.
 - **Decisão:**
@@ -68,6 +68,50 @@ Formato ADR. Não relitigar direção já decidida dentro de um how-to — linka
   recursos nas notas (checklist §2.1).
 - **Verificação pendente:** o gate biométrico só se valida **no aparelho/simulador
   iOS** (host só faz `cargo check` + `tsc`); Face ID real precisa do Mac + device.
+
+---
+
+## ADR-003 — Domínio próprio `ai.shvia.org`: dual-host e fim do curinga em `is_internal`
+
+- **Contexto/Problema:** o ShvIA saiu de `ia.blue3.com.br` para `ai.shvia.org` (a
+  Blue3 ficou como financiadora, não como marca do produto). A casca mobile é
+  mantida em **paridade** com a do SHVIA-DESKTOP e tinha os mesmos três pontos
+  blocantes: `SHVIA_URL` (o destino), a allowlist de navegação interna e o
+  `connect-src` da CSP. Nenhum deles falha de forma legível — host fora da
+  allowlist faz `on_navigation` tratar a **navegação inicial** como link externo
+  (o ShvIA abre no Safari e o app fica preso no splash); host fora do
+  `connect-src` faz o ping de alcance ser barrado pelo WebView, e a casca fica em
+  "Sem conexão" para sempre com o servidor no ar.
+- **Decisão:** dual-host por allowlist **exata** de FQDN, espelhando
+  `SERVER_HOSTS` do desktop: `ai.shvia.org` (canônico, o que o app abre),
+  `ia.shvia.org` (CNAME do canônico) e `ia.blue3.com.br` (legado, mesmo IP, só
+  durante a transição). Verificadas por DNS. Desligar o legado é remover uma
+  linha.
+- **Fim do curinga — mudança de COMPORTAMENTO, não só de host:** o
+  `is_internal` daqui aceitava `host.ends_with(".blue3.com.br")`, isto é,
+  **qualquer** subdomínio do domínio corporativo carregava dentro do app. O
+  desktop fechou isso no 0.9.0 dele; o mobile herda a mesma postura agora, e
+  passou a exigir **esquema** também (`https` para o servidor, `http`/`tauri`
+  para a casca local). O ápex `shvia.org` fica FORA de propósito: resolve para
+  outro IP e serve a landing, não o app. Coberto por 3 testes de unidade
+  (`cargo test`), incluindo o sufixo-armadilha `ai.shvia.org.evil.com`.
+- **Marca no splash:** o `<span>Blue3</span>` saiu e o `brand-mark.png` (a seta
+  da Blue3) virou `brand-mark.svg`, a mesma marca do favicon e do badge do web. O
+  splash é **pré-login**: a Blue3 só pode aparecer depois do login e só para
+  e-mail dela (SHVIA-WEB/`config/brand.php`). O rodapé passou a mostrar só
+  `v<versão>` — que é o que interessa saber num teste via TestFlight.
+- **O `identifier` `cloud.blue3.shvia` NÃO muda.** Além de zerar dados por
+  sandbox, desde a 2.51.0 do SHVIA-WEB o `APNS_BUNDLE_ID` tem de ser igual ao
+  bundle id — renomear quebraria push no iOS em silêncio. E trocar bundle id de
+  app publicado é app novo na loja, não atualização.
+- **Consequências/limites — a ordem importa mais aqui que no desktop:** a
+  atualização do mobile passa por **review da Apple**, com latência de dias. O
+  build com o host novo tem de ser **submetido e distribuído ANTES** de qualquer
+  redirect ou desligamento do host antigo; na ordem inversa, todo aparelho com a
+  versão publicada fica sem app até o review sair. Trocar de origem também
+  desloga uma vez (cookie é por origem) e zera `localStorage`/`IndexedDB` da
+  WebView. Verificação: `cargo test` + `npm run build` no host; o comportamento
+  de link externo (item 7 do `docs/smoke-test.md`) só se valida no aparelho.
 
 [BLUE3-MOBILE-SERVICOS-AO-VIVO.md]: ../../BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md
 [NOTIFICACOES.md]: ../../BLUE3-INTRANET-MOBILE/docs/NOTIFICACOES.md

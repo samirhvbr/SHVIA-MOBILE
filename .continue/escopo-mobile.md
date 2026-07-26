@@ -11,7 +11,7 @@
 
 ## 1. Premissa
 
-**Shell fino Tauri 2** carregando `https://ia.blue3.com.br` no WebView nativo
+**Shell fino Tauri 2** carregando `https://ai.shvia.org` no WebView nativo
 (iOS = WKWebView, Android = System WebView). Servidor = fonte da verdade. Não é
 reescrita — é o mesmo conceito do desktop, mobile-only.
 

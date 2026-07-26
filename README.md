@@ -1,7 +1,7 @@
 # ShvIA Mobile
 
 Cliente **mobile (iOS + Android)** do ShvIA — **shell fino Tauri 2** que carrega o
-ShvIA hospedado (`https://ia.blue3.com.br`) na WebView nativa (WKWebView / Android
+ShvIA hospedado (`https://ai.shvia.org`) na WebView nativa (WKWebView / Android
 System WebView). Irmão do `SHVIA-DESKTOP` (desktop) e do `SHVIA` (servidor Laravel).
 
 > Antes de mexer: **`git pull`**. Convenções em [CLAUDE.md](CLAUDE.md) ·
@@ -30,7 +30,7 @@ npm run tauri ios init && npm run tauri ios dev
 
 Shell fino: a WebView navega o FQDN real; o **servidor Laravel é a fonte da
 verdade** (dados, auth por **cookie de sessão same-origin**). Nenhum banco nem
-segredo moram no cliente. Links externos (fora de `*.blue3.com.br`) abrem no
+segredo moram no cliente. Links externos (fora dos hosts do servidor — `SERVER_HOSTS` em `src-tauri/src/lib.rs`) abrem no
 navegador do SO. Tarja "Sistema Offline" injetada em cada página.
 
 ## Produção / lojas

@@ -23,7 +23,7 @@ Trabalhar sobre base desatualizada gera conflito. Puxe primeiro, sempre.
 ## O que é este repo
 
 Cliente **mobile (iOS + Android)** do **ShvIA** — a plataforma de IA da Blue3 em
-`https://ia.blue3.com.br`. **Shell fino Tauri 2:** a WebView nativa (WKWebView no
+`https://ai.shvia.org`. **Shell fino Tauri 2:** a WebView nativa (WKWebView no
 iOS, System WebView no Android) carrega o ShvIA web (Blade) remoto; o servidor é a
 fonte da verdade. **Irmão** do `SHVIA-DESKTOP` (desktop) e do `SHVIA` (servidor
 Laravel) — mesmo produto, repos separados (convenção SSHVTERM-DESKTOP/-MOBILE).
@@ -75,5 +75,5 @@ vivem em secrets/custódia, **nunca** versionadas.
 
 - Versão: `version.md` · Roadmap/fases: [.continue/escopo-mobile.md](.continue/escopo-mobile.md)
 - Decisões: [docs/decisoes.md](docs/decisoes.md) (ADR)
-- Servidor/fonte da verdade: `~/x/SHVIA` (`https://ia.blue3.com.br`)
+- Servidor/fonte da verdade: `~/x/SHVIA-WEB` (`https://ai.shvia.org`)
 - Desktop irmão: `~/x/SHVIA-DESKTOP` · Base de reuso de loja: `~/x/BLUE3-INTRANET-MOBILE`

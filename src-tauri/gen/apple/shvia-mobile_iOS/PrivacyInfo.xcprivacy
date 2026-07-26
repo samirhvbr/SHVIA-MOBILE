@@ -3,7 +3,7 @@
 <!--
   Privacy manifest do ShvIA Mobile (obrigatório pela Apple desde 05/2024).
 
-  O app é um SHELL FINO first-party: WKWebView carregando ia.blue3.com.br.
+  O app é um SHELL FINO first-party: WKWebView carregando ai.shvia.org.
   Não há SDK de anúncio/analytics de terceiros no BINÁRIO, então:
     - NSPrivacyTracking = false (não rastreia entre apps/sites de terceiros)
     - NSPrivacyTrackingDomains vazio

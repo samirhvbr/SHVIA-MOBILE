@@ -2,7 +2,7 @@
 //!
 //! A janela abre a casca local (`src/`), que mostra um splash com a marca e
 //! redireciona o WebView (WKWebView no iOS, System WebView no Android) para o
-//! ShvIA hospedado (`https://ia.blue3.com.br`). A partir daí a UI é o próprio
+//! ShvIA hospedado (`https://ai.shvia.org`). A partir daí a UI é o próprio
 //! Blade do ShvIA — "mesmas funções" (espelha a postura do SHVIA-DESKTOP).
 //!
 //! Postura de menor privilégio: **nenhum comando nativo é exposto à página
@@ -40,15 +40,85 @@ const OFFLINE_BANNER_JS: &str = r#"(function () {
   window.addEventListener('offline', update);
 })();"#;
 
-/// Uma navegação fica **no app** se for a casca local (localhost/tauri) ou o
-/// ShvIA hospedado (`*.blue3.com.br`); qualquer outra origem é considerada um
-/// link externo e abre no navegador do SO.
+/// Host CANÔNICO do servidor do ShvIA — o destino da navegação da casca.
+const SERVER_HOST: &str = "ai.shvia.org";
+
+/// Hosts EXATOS aceitos como o servidor do ShvIA. Mantido em PARIDADE com
+/// `SERVER_HOSTS` de SHVIA-DESKTOP/src-tauri/src/lib.rs — as duas cascas são
+/// espelhadas de propósito.
+///
+/// Lista exata, **sem sufixo curinga**. O curinga anterior
+/// (`host.ends_with(".blue3.com.br")`) aceitava QUALQUER subdomínio do domínio
+/// corporativo dentro do app; o desktop fechou isso no 0.9.0 e o mobile herda a
+/// mesma postura agora. Cada entrada foi verificada por DNS:
+///
+/// - `ai.shvia.org` — canônico (200.36.196.254).
+/// - `ia.shvia.org` — CNAME de `ai.shvia.org`, mesma instância.
+/// - `ia.blue3.com.br` — domínio legado, MESMO IP. Só durante a transição;
+///   remover esta linha é tudo o que o desligamento dele exige.
+///
+/// O ápex `shvia.org` fica FORA de propósito: resolve para outro IP
+/// (170.233.231.20) e serve a landing, não o app — tem de abrir no navegador.
+const SERVER_HOSTS: &[&str] = &[SERVER_HOST, "ia.shvia.org", "ia.blue3.com.br"];
+
+/// Uma navegação fica **no app** se for a casca local (localhost/tauri) ou um
+/// host do servidor do ShvIA em https; qualquer outra origem é link externo e
+/// abre no navegador do SO.
 fn is_internal(url: &tauri::Url) -> bool {
-    let host = url.host_str().unwrap_or_default();
-    host == "localhost"
-        || host == "tauri.localhost"
-        || host == "blue3.com.br"
-        || host.ends_with(".blue3.com.br")
+    let host = match url.host_str() {
+        Some(h) => h,
+        None => return false,
+    };
+    // Casca local: `http` (Vite dev + prod Android) e `tauri` (prod iOS).
+    // O servidor exige https.
+    match url.scheme() {
+        "https" => SERVER_HOSTS.contains(&host),
+        "http" => host == "localhost" || host == "tauri.localhost",
+        "tauri" => host == "localhost",
+        _ => false,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_internal;
+
+    fn internal(url: &str) -> bool {
+        is_internal(&url.parse().expect("url de teste válida"))
+    }
+
+    /// A casca empacotada tem URL diferente por plataforma. Se qualquer uma
+    /// deixar de ser interna, a navegação inicial é bloqueada e o app fica preso
+    /// no splash — sem sintoma em `tauri dev` (que usa devUrl).
+    #[test]
+    fn casca_local_e_interna() {
+        assert!(internal("tauri://localhost/index.html"));
+        assert!(internal("http://tauri.localhost/index.html"));
+        assert!(internal("http://localhost:1420/"));
+    }
+
+    /// Dual-host da migração (26/07): as três faces do servidor entram, e o dia
+    /// em que o legado sair é só tirar a linha dele de SERVER_HOSTS.
+    #[test]
+    fn as_tres_faces_do_servidor_sao_internas() {
+        assert!(internal("https://ai.shvia.org/chat"));
+        assert!(internal("https://ia.shvia.org/chat"));
+        assert!(internal("https://ia.blue3.com.br/chat"));
+        assert!(!internal("http://ai.shvia.org/chat")); // servidor só em https
+    }
+
+    /// Fim do curinga: o ápex shvia.org é a LANDING (outro IP) e subdomínio
+    /// qualquer de blue3.com.br não é o ShvIA. Nada disso carrega dentro do app.
+    #[test]
+    fn outras_origens_sao_externas() {
+        assert!(!internal("https://shvia.org/"));
+        assert!(!internal("https://www.shvia.org/"));
+        assert!(!internal("https://evil.shvia.org/"));
+        assert!(!internal("https://blue3.com.br/"));
+        assert!(!internal("https://evil.blue3.com.br/"));
+        assert!(!internal("https://ai.shvia.org.evil.com/"));
+        assert!(!internal("file:///etc/passwd"));
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

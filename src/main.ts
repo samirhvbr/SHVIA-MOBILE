@@ -29,7 +29,10 @@ import {
 } from "@tauri-apps/plugin-biometric";
 
 // URL do servidor ShvIA (fonte da verdade).
-const SHVIA_URL = "https://ia.blue3.com.br";
+// Domínio próprio desde 26/07/2026. O legado ia.blue3.com.br serve a MESMA
+// instância (mesmo IP) e segue aceito como navegação interna (SERVER_HOSTS em
+// src-tauri/src/lib.rs), mas quem o app ABRE é este. Paridade com SHVIA-DESKTOP.
+const SHVIA_URL = "https://ai.shvia.org";
 // Intervalo do auto-retry no estado offline.
 const AUTO_RETRY_MS = 5_000;
 
@@ -251,7 +254,11 @@ window.addEventListener("DOMContentLoaded", () => {
   // Versão da casca visível na base (vem de package.json, que o
   // scripts/sync-version.mjs mantém igual ao version.md).
   const footEl = document.getElementById("foot");
-  if (footEl) footEl.textContent = `Blue3 · v${version}`;
+  // Só a versão: o splash é PRÉ-LOGIN e a marca Blue3 só pode aparecer depois do
+  // login, para e-mail dela (SHVIA-WEB/config/brand.php). O <h1>ShvIA</h1> logo
+  // acima já nomeia o produto; aqui o que interessa é saber QUAL build está no
+  // aparelho — a pergunta de todo teste via TestFlight.
+  if (footEl) footEl.textContent = `v${version}`;
 
   retryEl?.addEventListener("click", () => {
     void connect();

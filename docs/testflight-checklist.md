@@ -1,7 +1,7 @@
 # TestFlight & App Store — checklist de submissão iOS
 
 > Fecha o M2 (TestFlight) e prepara o M4 (loja). O app é **shell fino Tauri 2**
-> (`cloud.blue3.shvia`) carregando `ia.blue3.com.br`. Conta Apple da Blue3 já
+> (`cloud.blue3.shvia`) carregando `ai.shvia.org`. Conta Apple da Blue3 já
 > existe — **Team ID `S65UBCTPN5`**. Build **só no Mac** (Xcode).
 >
 > Legenda: `[x]` feito · `[ ]` falta · `[Mac]` exige o MacBook · `[ASC]` no App

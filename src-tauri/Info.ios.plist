@@ -14,7 +14,7 @@
     <key>NSFaceIDUsageDescription</key>
     <string>O Face ID desbloqueia o ShvIA localmente, sem digitar a senha a cada acesso.</string>
     <!-- Conformidade de exportação: o app só usa HTTPS/TLS padrão do sistema
-         (tráfego pro ia.blue3.com.br), que é criptografia isenta. Declarar aqui
+         (tráfego pro ai.shvia.org), que é criptografia isenta. Declarar aqui
          evita a pergunta manual a CADA upload no TestFlight/App Store Connect. -->
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
