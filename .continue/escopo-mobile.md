@@ -128,7 +128,7 @@ offline + roteio de link externo; sem menu/multi-janela/WebKitGTK/TTS-espeak),
 ### M3 — Valor nativo (destrava App Store 4.2) — **OBRIGATÓRIO (decisão 15/07)**
 Push (APNs), biometria (Face ID), compartilhar, deep-link `shvia://`, tela offline
 nativa, safe-area/status bar/splash. **Samir escolheu o Caminho B — App Store PÚBLICA,
-mesmo trilho do `~/x/BLUE3-INTRANET-MOBILE`** (`app-store-connect`, conta S65UBCTPN5,
+mesmo trilho do `~/x/BLUE3/BLUE3-INTRANET-MOBILE`** (`app-store-connect`, conta S65UBCTPN5,
 custo zero novo). Como o BLUE3 é Flutter NATIVO ele passou a 4.2 fácil; o ShvIA é
 **shell fino (wrapper) → a 4.2 se aplica**, então o M3 deixa de ser opcional. Push =
 reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
@@ -144,10 +144,23 @@ reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
   de sessão (é acesso LOCAL, modelo Blue3). **Verificado no host:** `cargo check`
   (host **e** `aarch64-apple-ios`) + `tsc`/`vite build` passam. **Pendente:** Face ID
   real no simulador/aparelho (novo item do smoke-test — só se valida com device).
-- [ ] **Push (APNs)** — bloqueado em recurso externo (Samir): `.p8` + capability Push +
-  App Group + entitlement no portal, **e** endpoint no SHVIA-WEB (guardar token + enviar).
-- [ ] **Universal Links** — bloqueado em `apple-app-site-association` no SHVIA-WEB +
-  entitlement `associated-domains`.
+- [ ] **Push (APNs) — DESBLOQUEADO PELA METADE (revisão de 28/07).** O **lado
+  servidor ficou pronto no SHVIA-WEB 2.51.0, em 16/07** — mesmo dia em que esta
+  linha foi escrita dizendo que estava bloqueado nele. Já existem lá `POST` e
+  `DELETE /push/token` (sessão same-origin, `{token, platform}`), `ApnsClient`
+  ES256/HTTP2, `PushService`, job de fila, `php artisan push:test` e 11 testes
+  verdes (`~/x/SHVIA/SHVIA-WEB/docs/PUSH/PUSH-APNS-20260716.md`). **O atraso agora é
+  do cliente**, em duas pontas: (a) **esta casca** — entitlement `aps-environment`,
+  permissão + `registerForRemoteNotifications`, injetar o token na página remota
+  pelo mesmo `webview.eval` do `__shviaShellVersion`, e navegar pro `data.route` no
+  tap; (b) **front do SHVIA-WEB** — ler `window.__shviaPushToken` e postar em
+  `/push/token` (cookie + CSRF), com `DELETE` no logout. **Restam do Samir, fora do
+  código:** capability **Push Notifications** no App ID `cloud.blue3.shvia` e as
+  `APNS_*` no `.env` de produção. Nota: **App Group não é preciso** para alerta
+  simples — esta linha o exigia à toa.
+- [ ] **Universal Links** — segue bloqueado: conferido em 28/07, **nem
+  `apple-app-site-association` nem `assetlinks.json` existem no SHVIA-WEB 2.88.4**;
+  falta também o entitlement `associated-domains`.
 - [~] Câmera+mic (feito) · tela offline nativa (feita).
 
 ### M4 — Publicação nas lojas → **checklist executável em [../docs/testflight-checklist.md](../docs/testflight-checklist.md)**
@@ -162,6 +175,44 @@ UserDefaults CA92.1), `ITSAppUsesNonExemptEncryption=false`, `minimumSystemVersi
 Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
+
+### 🔎 Revisão de 28/07 — o que o mobile deixou passar enquanto o resto andava
+
+O roadmap abaixo estava congelado em **16/07**. Nesse intervalo o **SHVIA-WEB foi
+de 2.19.2 a 2.88.4** (~70 versões) e o desktop, de 0.9.x a **1.1.9**. O que a
+revisão achou, do mais caro pro mais barato:
+
+1. **Push: o servidor chegou primeiro e ninguém avisou o mobile.** Pronto desde a
+   **2.51.0 (16/07)**. O roadmap seguia dizendo "bloqueado no SHVIA-WEB" por 12
+   dias. Como push é **o gancho mais forte da regra 4.2**, isso é o caminho
+   crítico da loja pública parado por desinformação, não por falta de recurso.
+   Detalhes na fase M3.
+2. **M5 marcado `[x]` com base na 2.19.2 — e o web mudou muito desde então.**
+   Entraram, entre outras, o **Modo Code** (topbar com toggle de motor, timeline
+   por projeto), a **memória (ai-memory)** e os overlays de saída. Nada disso
+   passou por um olho mobile. **O `[x]` do M5 vale para o que existia em 15/07**;
+   as telas novas são território não verificado — reteste antes de mandar
+   screenshot pra loja.
+3. **Ambiente local quebrado (consertado nesta revisão, 0.5.1).** O repo mudou de
+   `~/x/SHVIA-MOBILE` para `~/x/SHVIA/SHVIA-MOBILE` e o `src-tauri/target` (3,9 GB)
+   guardava caminhos absolutos antigos → `cargo check` morria em
+   `failed to read plugin permissions ... No such file or directory`. Sintoma
+   confuso: parece erro de plugin, é cache. Cura: apagar `target/debug/build` e
+   `target/debug/.fingerprint`. O `node_modules` também era de 07/07 e **não tinha
+   o `@tauri-apps/plugin-biometric`** (entrou na 0.4.0, 16/07) — ou seja, ninguém
+   buildava a casca aqui desde antes da biometria.
+4. **Toda a doc apontava para os caminhos velhos dos repos irmãos** (`~/x/SHVIA-WEB`,
+   `~/x/SHVIA-DESKTOP`, `~/x/BLUE3-INTRANET-MOBILE`) — corrigido para
+   `~/x/SHVIA/…` e `~/x/BLUE3/…`, inclusive os links relativos do ADR-002.
+5. **`gen/apple/Info.plist` ainda congelado em `0.2.6`** e o `tauri.properties` do
+   Android em `versionName 0.2.2 / versionCode 2002`, com o app em **0.5.0**. Já
+   estava anotado como gotcha no checklist §1.3 e continua valendo — conferir no
+   Organizer antes do upload.
+6. **Verificação verde no host, pós-conserto:** `cargo check` ✓ · `cargo test`
+   **3/3** ✓ (allowlist de host) · `tsc` + `vite build` ✓ · `npm audit` **0
+   vulnerabilidades** (era 1 alta, postcss 8.5.16 → 8.5.24).
+
+### Fases
 
 - [x] M0 · [~] M1 (build OK; falta smoke-test on-device) · [x] **M2 FECHADO 🎉**
   (15/07: app instalado e RODANDO no iPhone físico via TestFlight interno, build
@@ -183,10 +234,13 @@ Pré-requisito de qualidade p/ submeter.
   confirmada: portrait (390×844) e desktop (1280×800) idênticos. **2.19.2
   DEPLOYADA (15/07)** — confirmado: `/api/v1/health` version.app=2.19.2 e os
   assets em produção têm o gatilho (CSS 17× / JS 3× `max-height: 480px`).
-- **Próximo (M2 já fechado):** fechar smoke-test itens 4–7 (TTS/mic/anexos/links)
-  AGORA no iPhone físico via TestFlight — mic/câmera reais que o simulador fingia.
-  Depois: **M3 (valor nativo)** rumo à loja pública (push APNs reusando a .p8 da
-  Blue3, deep-link, biometria — ver checklist §2.1). Android on-device pendente.
+- **Próximo (revisto em 28/07):** **push é o item de maior alavancagem** — o
+  servidor já espera o cliente há 12 dias e é ele que sustenta a defesa da 4.2. A
+  parte da casca (entitlement + permissão + injetar o token) fecha aqui no Linux;
+  só o teste ponta-a-ponta pede Mac/aparelho. Em paralelo, o de menor esforço:
+  fechar smoke-test itens 4–7 (TTS/mic/anexos/links) no iPhone físico via
+  TestFlight — mic/câmera reais que o simulador fingia. Android on-device pendente.
+  Ver checklist §2.1 e a fase M3.
   **Gotchas da 1ª submissão iOS documentados** em
   [../docs/testflight-checklist.md](../docs/testflight-checklist.md): buildar SÓ
   pelo terminal (Xcode GUI = `npm: command not found`), ícone 1024 sem canal alpha

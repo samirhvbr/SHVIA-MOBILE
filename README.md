@@ -10,9 +10,14 @@ System WebView). Irmão do `SHVIA-DESKTOP` (desktop) e do `SHVIA` (servidor Lara
 
 ## Status
 
-**M0 — scaffold do shell mobile-only** (compila no host via `cargo check`).
-Próximo: **M1** (Android — instalar SDK/NDK+JDK17, `tauri android init`, e o
-**smoke-test crítico** do `/chat` streaming (SSE) na WebView Android).
+**M2 fechado** (15/07): o app roda no **iPhone físico** via TestFlight interno,
+com biometria (Face ID/Touch ID) na 0.4.0 e o domínio próprio `ai.shvia.org` na
+0.5.0. Android **builda** (APK/AAB no Linux), mas ainda não rodou em aparelho.
+
+**Próximo: push (APNs)** — o lado servidor está pronto no SHVIA-WEB desde a
+2.51.0 e falta o lado cliente; é ele que sustenta a defesa da regra **4.2** da
+App Store. Estado completo e o que a revisão de 28/07 achou:
+[.continue/escopo-mobile.md](.continue/escopo-mobile.md) §5.
 
 ## Build
 

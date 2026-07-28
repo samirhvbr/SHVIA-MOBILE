@@ -87,7 +87,7 @@ verdade, e só depois decidir o caminho da loja. As duas partes abaixo refletem 
 ### 2.1 DECISÃO (15/07): Caminho B — App Store pública, igual ao BLUE3-INTRANET-MOBILE
 **Samir decidiu**: mesmo trilho do app Flutter da Blue3, que publica na **App Store
 pública** via `method: app-store-connect` na conta **`S65UBCTPN5`** (confirmado no
-`~/x/BLUE3-INTRANET-MOBILE/docs/Runner .../ExportOptions.plist`). **Sem custo novo:**
+`~/x/BLUE3/BLUE3-INTRANET-MOBILE/docs/Runner .../ExportOptions.plist`). **Sem custo novo:**
 a conta Apple Developer paga da Blue3 já cobre todos os apps da organização.
 Detalhe reusável dali: `manageAppVersionAndBuildNumber: true` (Xcode cuida do build
 number → resolve o gotcha do §1.3) e `signingStyle: automatic`, `teamID S65UBCTPN5`.
@@ -100,17 +100,34 @@ obrigatório** — não é mais opcional. (Distribuição privada via Business M
 pularia a 4.2, foi descartada por essa decisão.)
 
 **Valor nativo mínimo pra não bater na 4.2 (= M3):**
-  - [ ] Push (APNs) — o gancho mais forte de "não é só um site". **Reuso concreto
+  - [~] Push (APNs) — o gancho mais forte de "não é só um site". **Reuso concreto
         da Blue3:** o BLUE3 usa **APNs token-based** (`.p8` + KeyID + TeamID via
         `firebase/php-jwt` ES256, sem certificado). A **`.p8` é por CONTA Apple
         (Team ID), não por app** → como o ShvIA usa o mesmo Team `S65UBCTPN5`, **a
         MESMA chave serve**; só muda o `APNS_BUNDLE_ID` p/ `cloud.blue3.shvia`.
-        Cruza 3 pontos: (a) shell Tauri — entitlement `aps-environment` + App Group
-        + registrar/receber device token; (b) **SHVIA-WEB** — endpoint p/ guardar o
-        token + envio APNs (ES256, espelhar o do sys BLUE3); (c) a `.p8` em mãos
-        (com o Samir / gerar em developer.apple.com ▸ Keys). Refs:
-        `BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md` (D9, .env APNS_*)
-        e `docs/MOBILE/SERVICOS_ESPORTES.md`.
+        Cruza 3 pontos — **estado real em 28/07:**
+        - [x] **(b) SHVIA-WEB — FEITO na 2.51.0 (16/07).** `POST`/`DELETE
+              /push/token` pela sessão same-origin (`{token, platform}`),
+              `ApnsClient` (JWT ES256, HTTP/2), `PushService::sendToUser()`, job
+              `SendPushNotification`, `php artisan push:test {user}`,
+              `config/apns.php`, 11 testes verdes. Contrato completo em
+              `~/x/SHVIA/SHVIA-WEB/docs/PUSH/PUSH-APNS-20260716.md`.
+        - [ ] **(a) shell Tauri (ESTE repo)** — entitlement `aps-environment`,
+              pedir permissão, `registerForRemoteNotifications`, injetar o device
+              token na página remota (mesmo `webview.eval` do
+              `window.__shviaShellVersion`) e navegar pro `data.route` no tap.
+              **App Group NÃO é necessário** para alerta simples — só entraria com
+              Notification Service Extension.
+        - [ ] **(a2) front do SHVIA-WEB** — ler `window.__shviaPushToken` → `POST
+              /push/token` com cookie + CSRF; `DELETE` no logout. Conferido em
+              28/07: ainda não existe no `public/js/app.js`.
+        - [ ] **(c) portal/infra (Samir)** — capability **Push Notifications** no
+              App ID `cloud.blue3.shvia` (é o que muda por app; a `.p8` não) e as
+              `APNS_*` no `.env` de produção. ⚠️ `APNS_PRODUCTION`: **false** p/
+              build debug (token de sandbox), **true** p/ TestFlight/loja — causa
+              nº 1 de "push não chega".
+        Refs: `~/x/BLUE3/BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md`
+        (D9, .env APNS_*) e `docs/MOBILE/SERVICOS_ESPORTES.md`.
   - [ ] Deep-link `shvia://` + Universal Links (abre conversa/projeto direto)
   - [x] **Biometria (Face ID/Touch ID) — mobile 0.4.0, build-verified.** Gate local
         (opt-in 1ª execução + lock no cold-start) via `tauri-plugin-biometric`. Falta

@@ -45,27 +45,46 @@ Formato ADR. Não relitigar direção já decidida dentro de um how-to — linka
      0.4.0). `tauri-plugin-biometric`; o gate roda na página **local** (`src/`) —
      única com bridge nativo (a página remota **não** recebe comando, ADR-001) — e
      trava o cold-start antes de navegar pro ShvIA hospedado. Espelha o modelo Blue3
-     ([BIOMETRIA.md](../../BLUE3-INTRANET-MOBILE/docs/MOBILE/BIOMETRIA.md)): a
+     ([BIOMETRIA.md](../../../BLUE3/BLUE3-INTRANET-MOBILE/docs/MOBILE/BIOMETRIA.md)): a
      biometria é **acesso LOCAL**; o cookie de sessão same-origin continua sendo o
      auth remoto. Toggle de ativar/desativar vive na casca (não há como ser no ShvIA
      web sem furar o posture).
-  2. **Push (APNs)** — **bloqueado em recursos externos** (do Samir/servidor):
-     `.p8` (portal Apple ▸ Keys), capability **Push** + **App Group** + entitlement
-     `aps-environment` no App ID, **e** endpoint no **SHVIA-WEB** (guardar token +
-     enviar). Reuso concreto: a `.p8` é **por Team `S65UBCTPN5`**, não por app → a
-     mesma chave da Blue3 serve, muda só o bundle p/ `cloud.blue3.shvia`. Envio:
-     espelhar o **ES256/`firebase/php-jwt`** do serviço D9 da Blue3
-     ([BLUE3-MOBILE-SERVICOS-AO-VIVO.md]) **ou** FCM como o BLUE3-INTRANET-MOBILE
-     ([NOTIFICACOES.md]). É "o gancho mais forte" da 4.2, mas **não fecha só na casca**.
-  3. **Deep-link / Universal Links** — **bloqueado**: exige
+  2. **Push (APNs)** — **o lado SERVIDOR saiu do bloqueio: está PRONTO** desde o
+     **SHVIA-WEB 2.51.0 (16/07)**, no mesmo dia deste ADR — que por isso ficou
+     desatualizado até 28/07. Já existem lá: `POST /push/token` e
+     `DELETE /push/token` (autenticados pela **sessão** same-origin, corpo
+     `{token, platform:"ios"|"android"}`), `ApnsClient` (JWT **ES256** com a `.p8`,
+     HTTP/2), `PushService::sendToUser()`, o job `SendPushNotification`,
+     `php artisan push:test {user}`, `config/apns.php` e 11 testes verdes. Reuso
+     confirmado: a `.p8` é **por Team `S65UBCTPN5`**, não por app → a mesma chave da
+     Blue3 serve, muda só o `APNS_BUNDLE_ID` p/ `cloud.blue3.shvia`. Contrato e
+     pendências em `~/x/SHVIA/SHVIA-WEB/docs/PUSH/PUSH-APNS-20260716.md`.
+     **O que ainda falta é dos DOIS lados cliente:** (a) **nesta casca** —
+     entitlement `aps-environment`, pedir permissão, `registerForRemoteNotifications`,
+     e injetar o device token na página remota pelo mesmo caminho já usado pelo
+     `window.__shviaShellVersion` (`webview.eval`), mais navegar pro `data.route` no
+     tap da notificação; (b) **no front do SHVIA-WEB** — ler `window.__shviaPushToken`
+     e fazer o `POST /push/token` com cookie + CSRF (e `DELETE` no logout).
+     **Fora do código, do Samir:** habilitar a capability **Push Notifications** no
+     App ID `cloud.blue3.shvia` (o que muda por app; a `.p8` não) e as `APNS_*` no
+     `.env` de produção. **App Group não é necessário** para alerta simples — o
+     requisito citado na redação original deste ADR não procede (só entraria com
+     Notification Service Extension). Armadilha nº 1 registrada: build **debug**
+     emite token de **sandbox** (`APNS_PRODUCTION=false`), TestFlight/loja emitem de
+     **produção** (`true`). Alternativa FCM ([NOTIFICACOES.md], caminho do
+     BLUE3-INTRANET-MOBILE) fica só para o **Android**, depois.
+  3. **Deep-link / Universal Links** — **segue bloqueado no servidor**: exige
      `apple-app-site-association` no **SHVIA-WEB** + entitlement `associated-domains`
-     (e `assetlinks.json` no Android). Custom scheme `shvia://` é parcial e fraco
+     (e `assetlinks.json` no Android). Conferido em 28/07: **nenhum dos dois arquivos
+     existe** no SHVIA-WEB (2.88.4). Custom scheme `shvia://` é parcial e fraco
      sozinho — Universal Links é o que vale, e depende do servidor.
   4. Câmera+mic (feito), tela offline nativa (feita — reforçar), share sheet (depois).
 - **Consequências:** dá pra **avançar o M3 hoje** sem depender de nada externo
-  (biometria entregue na 0.4.0). Push e Universal Links entram quando o Samir
-  liberar `.p8` + portal + os endpoints no SHVIA-WEB. Na review, citar esses
-  recursos nas notas (checklist §2.1).
+  (biometria entregue na 0.4.0). **Revisão de 28/07:** o push saiu da fila do "espera
+  o servidor" — o servidor chegou primeiro e o cliente é que ficou devendo, então
+  **push passa a ser o próximo item do M3**, não o último. Universal Links continua
+  parado no `apple-app-site-association`. Na review da Apple, citar esses recursos
+  nas notas (checklist §2.1).
 - **Verificação pendente:** o gate biométrico só se valida **no aparelho/simulador
   iOS** (host só faz `cargo check` + `tsc`); Face ID real precisa do Mac + device.
 
@@ -113,5 +132,5 @@ Formato ADR. Não relitigar direção já decidida dentro de um how-to — linka
   WebView. Verificação: `cargo test` + `npm run build` no host; o comportamento
   de link externo (item 7 do `docs/smoke-test.md`) só se valida no aparelho.
 
-[BLUE3-MOBILE-SERVICOS-AO-VIVO.md]: ../../BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md
-[NOTIFICACOES.md]: ../../BLUE3-INTRANET-MOBILE/docs/NOTIFICACOES.md
+[BLUE3-MOBILE-SERVICOS-AO-VIVO.md]: ../../../BLUE3/BLUE3-INTRANET-MOBILE/docs/BLUE3-MOBILE-SERVICOS-AO-VIVO.md
+[NOTIFICACOES.md]: ../../../BLUE3/BLUE3-INTRANET-MOBILE/docs/NOTIFICACOES.md

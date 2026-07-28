@@ -75,5 +75,6 @@ vivem em secrets/custódia, **nunca** versionadas.
 
 - Versão: `version.md` · Roadmap/fases: [.continue/escopo-mobile.md](.continue/escopo-mobile.md)
 - Decisões: [docs/decisoes.md](docs/decisoes.md) (ADR)
-- Servidor/fonte da verdade: `~/x/SHVIA-WEB` (`https://ai.shvia.org`)
-- Desktop irmão: `~/x/SHVIA-DESKTOP` · Base de reuso de loja: `~/x/BLUE3-INTRANET-MOBILE`
+- Servidor/fonte da verdade: `~/x/SHVIA/SHVIA-WEB` (`https://ai.shvia.org`)
+- Desktop irmão: `~/x/SHVIA/SHVIA-DESKTOP` · Base de reuso de loja:
+  `~/x/BLUE3/BLUE3-INTRANET-MOBILE`
