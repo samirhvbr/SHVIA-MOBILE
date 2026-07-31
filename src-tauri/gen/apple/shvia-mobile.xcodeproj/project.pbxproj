@@ -12,6 +12,8 @@
 		26F25DD8441BA60929AF248B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD192F94797B0F5DB02523A0 /* CoreGraphics.framework */; };
 		292682F38E4A3C9F0570ED88 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F45FCAB1B7DAD76CB5C72449 /* Metal.framework */; };
 		3F9D9EB4F04B6C7B10B503C8 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 969A061C1F845593DB1271D0 /* Security.framework */; };
+		4FF856F904D45305E04960C2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1C7CE2E3090AA3A2A4A7F94E /* PrivacyInfo.xcprivacy */; };
+		53DB187224B75789433CAE82 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = 63ACB79418A2B01C3A7A8F3A /* libapp.a */; };
 		7205080BE98AA915456BBB07 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 9F9B784DD46ED7EBCF28D2E3 /* assets */; };
 		8B6397F1705C477BF4817CD8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E5E3995CF11B1923F43986A8 /* Assets.xcassets */; };
 		A0E67C932998BB6D0589B455 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE524945CBD01235AB2525AC /* LaunchScreen.storyboard */; };
@@ -23,12 +25,14 @@
 
 /* Begin PBXFileReference section */
 		1369AB049FB4709926D16ECE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1C7CE2E3090AA3A2A4A7F94E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E8CF89D5E157D067B9EE4E5 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		3800F5003886673D7FD1F11B /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		39A4E48B026CAC666D89000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		50CCDCAE06E74C72E170004C /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		56DCD52E02A7FE7AB86B37C3 /* shvia-mobile_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "shvia-mobile_iOS.entitlements"; sourceTree = "<group>"; };
 		5B89306F919E04204B7B9CA4 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		63ACB79418A2B01C3A7A8F3A /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		67D02AAC23E779044E29F6C6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		693661B59627B6F74887C760 /* shvia-mobile_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "shvia-mobile_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		969A061C1F845593DB1271D0 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -67,6 +71,14 @@
 				B15A46F6B48B87BD1E248D81 /* shvia-mobile */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		3B377A1239AAAD3A5A586799 /* release */ = {
+			isa = PBXGroup;
+			children = (
+				63ACB79418A2B01C3A7A8F3A /* libapp.a */,
+			);
+			path = release;
 			sourceTree = "<group>";
 		};
 		4185D7D3065339D59787FCEC = {
@@ -138,16 +150,33 @@
 			isa = PBXGroup;
 			children = (
 				39A4E48B026CAC666D89000D /* Info.plist */,
+				1C7CE2E3090AA3A2A4A7F94E /* PrivacyInfo.xcprivacy */,
 				56DCD52E02A7FE7AB86B37C3 /* shvia-mobile_iOS.entitlements */,
 			);
 			path = "shvia-mobile_iOS";
 			sourceTree = "<group>";
 		};
+		D73481623C2226EF599025CD /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				3B377A1239AAAD3A5A586799 /* release */,
+			);
+			path = arm64;
+			sourceTree = "<group>";
+		};
 		E7A92CA43DD7DBA7B898A3A7 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				D73481623C2226EF599025CD /* arm64 */,
 			);
 			path = Externals;
+			sourceTree = "<group>";
+		};
+		"TEMP_AB0D1D5E-357A-40B3-BFB1-AAF86975EA1D" /* x86_64 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = x86_64;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,7 +242,9 @@
 			files = (
 				8B6397F1705C477BF4817CD8 /* Assets.xcassets in Resources */,
 				A0E67C932998BB6D0589B455 /* LaunchScreen.storyboard in Resources */,
+				4FF856F904D45305E04960C2 /* PrivacyInfo.xcprivacy in Resources */,
 				7205080BE98AA915456BBB07 /* assets in Resources */,
+				53DB187224B75789433CAE82 /* libapp.a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

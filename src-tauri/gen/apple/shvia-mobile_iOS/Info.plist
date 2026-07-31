@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-  Este arquivo é o INFOPLIST_FILE do alvo Xcode (conferido no project.pbxproj) —
-  é ELE que vai pro bundle, não o `src-tauri/Info.ios.plist`. O `Info.ios.plist`
-  é a FONTE: o Tauri o mescla aqui no `tauri ios init`. Como o `gen/apple` foi
-  gerado em 14/07 (0.3.0) e o `Info.ios.plist` ganhou chaves DEPOIS, esta cópia
-  ficou defasada — as chaves abaixo foram reconciliadas à mão em 30/07 (0.5.3).
-
-  Duas delas não são cosméticas:
-  - `NSFaceIDUsageDescription` (entrou na 0.4.0): sem ela o iOS **encerra o app**
-    na 1ª chamada de `evaluatePolicy` — que aqui é o card "Ativar Face ID" da 1ª
-    execução, a primeira tela que um revisor da Apple vê.
-  - `ITSAppUsesNonExemptEncryption` (0.3.11): evita a pergunta de conformidade de
-    exportação a CADA upload no App Store Connect.
-
-  Ao rodar `tauri ios init` de novo no Mac, o Tauri regenera este arquivo a
-  partir do `src-tauri/Info.ios.plist` + da versão do `tauri.conf.json` — o
-  resultado deve ser equivalente a este. Se divergir, a FONTE vence.
--->
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -33,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5.3</string>
+	<string>0.5.4</string>
 	<key>CFBundleVersion</key>
-	<string>0.5.3</string>
+	<string>0.5.4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

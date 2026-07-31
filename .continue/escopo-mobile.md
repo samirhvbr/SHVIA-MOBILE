@@ -257,6 +257,29 @@ só roda no `prebuild`, então quem não buildou não propagou; reconciliado em 
    anexo por foto funcionarem na WebView. Some junto com o smoke-test on-device
    que já estava pendente.
 
+### ✅ 31/07 — dia da publicação: lado máquina CONCLUÍDO (0.5.4)
+
+Executado no Mac, na ordem do runbook §0 do checklist:
+
+1. **`tauri ios init` rodado** (xcodegen 2.46): `PrivacyInfo.xcprivacy` entrou no
+   alvo e no IPA. **Descoberta:** o init **não mescla** o `Info.ios.plist` no
+   Info.plist gerado (removeu as 4 chaves; restauradas do 0.5.3 — regra nova no
+   checklist). `tauri icon` não foi rodado (init não tocou ícones; evita o
+   gotcha do alpha/navy).
+2. **Gotcha novo:** o cache de `target/` com caminhos pré-mudança de pasta
+   (`~/x/SHVIA-MOBILE`) quebra também o build release iOS — mesma cura
+   (rm build/.fingerprint), agora documentada no checklist.
+3. **`ShvIA.ipa` de distribuição gerado e auditado** (export app-store-connect;
+   PrivacyInfo/FaceID/encryption/versão conferidos por unzip no payload).
+4. **Bloqueio duro do ASC destravado:** `privacidade.html` 0.4.1 com controlador
+   preenchido (BLUE3 TECNOLOGIA LTDA, CNPJ 19.648.136/0001-30) — commitado e
+   pushed no SHVIA-SITE; harness verde.
+
+**Resta (humano):** deploy do site no servidor + caixas `privacidade@`/`suporte@`
++ conferência do scheduler de retenção · smoke on-device com item 10 (biometria)
+primeiro · upload do IPA (Organizer/Transporter — sem chave ASC de API no Mac) ·
+ficha da loja no ASC · decisão "submeter já × esperar o push".
+
 ### 🔎 Revisão de 28/07 — o que o mobile deixou passar enquanto o resto andava
 
 O roadmap abaixo estava congelado em **16/07**. Nesse intervalo o **SHVIA-WEB foi

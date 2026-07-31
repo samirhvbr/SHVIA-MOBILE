@@ -28,10 +28,12 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
       - Suporte: `https://shvia.org/suporte.html`
 
       **Falta, e é do Samir:**
-      - [ ] 🔴 **Razão social + CNPJ do controlador.** A página tem
-            `[PREENCHER: razão social]` e `[PREENCHER: CNPJ]` na seção 1. O
-            harness do site reprova enquanto estiverem lá e o `deploy.sh` faz
-            `reset --hard` — **o site não sobe até preencher**, de propósito.
+      - [x] 🟢 **Razão social + CNPJ — PREENCHIDOS em 31/07 (site 0.4.1, pushed).**
+            `BLUE3 TECNOLOGIA LTDA`, CNPJ `19.648.136/0001-30` — razão social
+            confirmada pelo certificado Apple da conta S65UBCTPN5; CNPJ do
+            registro público (sócio-administrador: Samir Hanna Verza). Harness
+            do site verde (124 checks). **Conferir na leitura final antes do
+            deploy** — identificação legal é do Samir por definição.
       - [ ] 🔴 **Criar as caixas `privacidade@shvia.org` e `suporte@shvia.org`.**
             As duas são citadas nas páginas e vão para a ficha da loja; o revisor
             da Apple às vezes escreve para o suporte durante a review.
@@ -51,19 +53,34 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
             "pendente de ativação em prod". Retenção documentada que não executa
             é exposição de LGPD — verificar antes de a página ir ao ar.
 
-### Correção de raiz — 15 min no Mac, resolve 3 pendências de uma vez
-- [ ] `[Mac]` **`npm run tauri ios init`** com a árvore atualizada. O `gen/apple`
-      é de 14/07 e regenerá-lo conserta, de uma vez:
-      **(a)** `Info.plist` sem `NSFaceIDUsageDescription` → hoje o app **morreria**
-      no card "Ativar Face ID" da 1ª execução (§1.2);
-      **(b)** `PrivacyInfo.xcprivacy` fora do alvo Xcode (§1.2);
-      **(c)** versão literal `0.2.6` no bundle (§1.3).
-      As três foram remendadas à mão na 0.5.3, mas o `init` é a cura real.
-      Depois: `npm run tauri icon brand/shvia-desktop-icon-1024.png` e
-      **restaurar o navy `#0D1B2A`** no `ic_launcher_background.xml` do Android
-      (o `tauri icon` reseta pra `#fff`).
-- [ ] `[Mac]` Conferir no Xcode que o `PrivacyInfo.xcprivacy` apareceu em
-      TARGETS ▸ Build Phases ▸ Copy Bundle Resources.
+### Correção de raiz — FEITA em 31/07 no Mac (0.5.4)
+- [x] `[Mac]` **`npm run tauri ios init` rodado em 31/07** (instalou xcodegen
+      2.46 e regenerou o `.xcodeproj`). Resultado:
+      **(b)** ✅ `PrivacyInfo.xcprivacy` entrou no alvo (PBXBuildFile "in
+      Resources" no `project.pbxproj` — conferido por grep, 4 refs) e **está no
+      payload do IPA** (auditado por unzip);
+      **(c)** ✅ versão vem das fontes (0.5.x).
+      **(a)** ⚠️ **DESCOBERTA que muda a regra: o `ios init` NÃO mescla o
+      `Info.ios.plist` no `gen/apple/.../Info.plist`** (a crença da 0.3.0 não
+      vale mais). O init de 31/07 REMOVEU as 4 chaves (mic, câmera, Face ID,
+      encryption) do arquivo gerado — diff só-deleções; restauradas via
+      `git checkout` do 0.5.3. **Regra nova: após QUALQUER `ios init`, conferir
+      as 4 chaves no `gen/apple/shvia-mobile_iOS/Info.plist` e restaurar se
+      preciso.** As chaves ficam nos DOIS arquivos (fonte + gerado), de propósito.
+- [x] `tauri icon` **NÃO foi rodado, de propósito**: o init não tocou o
+      `Assets.xcassets` (ícones 18/18 sem alpha preservados) nem o Android —
+      rodar de novo só reintroduziria o gotcha do alpha e o reset do navy.
+- [x] `PrivacyInfo.xcprivacy` em Copy Bundle Resources — conferido no pbxproj e
+      no IPA final (não foi preciso abrir o Xcode GUI).
+- [x] **Gotcha novo (31/07): o cache do `target/` com caminhos velhos também
+      morde o build de RELEASE iOS** — `failed to read plugin permissions
+      .../x/SHVIA-MOBILE/...` (caminho antigo). Mesma cura da revisão de 28/07,
+      agora no target ios: `rm -rf src-tauri/target/{release,aarch64-apple-ios/release}/{build,.fingerprint}`.
+- [x] `[Mac]` **Build de distribuição OK (31/07):**
+      `npm run tauri ios build -- --export-method app-store-connect` →
+      `src-tauri/gen/apple/build/arm64/ShvIA.ipa` (18 MB). IPA auditado:
+      PrivacyInfo no payload, `NSFaceIDUsageDescription`,
+      `ITSAppUsesNonExemptEncryption=false`, versão correta.
 
 ### Validação no aparelho — o que nunca rodou em iOS
 - [ ] `[Mac]` **Smoke-test item 10 (biometria) PRIMEIRO** — Face ID é o caminho
