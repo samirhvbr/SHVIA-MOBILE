@@ -59,6 +59,12 @@ const SERVER_HOST: &str = "ai.shvia.org";
 ///
 /// O ápex `shvia.org` fica FORA de propósito: resolve para outro IP
 /// (170.233.231.20) e serve a landing, não o app — tem de abrir no navegador.
+///
+/// No MESMO IP do ápex vive `mem.shvia.org` (servidor ai-memory, desde
+/// 31/07/2026) — o melhor argumento contra o curinga que esta lista recusa: é
+/// `.shvia.org`, é nosso, é legítimo, e mesmo assim **não pode entrar**. Serve
+/// wiki markdown **escrita por agentes**, e o curinga o teria admitido sozinho
+/// no dia em que o DNS subiu, sem ninguém decidir nada.
 const SERVER_HOSTS: &[&str] = &[SERVER_HOST, "ia.shvia.org", "ia.blue3.com.br"];
 
 /// Uma navegação fica **no app** se for a casca local (localhost/tauri) ou um
@@ -109,10 +115,15 @@ mod tests {
 
     /// Fim do curinga: o ápex shvia.org é a LANDING (outro IP) e subdomínio
     /// qualquer de blue3.com.br não é o ShvIA. Nada disso carrega dentro do app.
+    ///
+    /// `mem.shvia.org` (ai-memory, mesmo IP do ápex) é o caso REAL, não
+    /// hipotético: subdomínio nosso, legítimo, no ar, servindo wiki escrita por
+    /// agentes. É o que o curinga deixaria entrar sem ninguém decidir nada.
     #[test]
     fn outras_origens_sao_externas() {
         assert!(!internal("https://shvia.org/"));
         assert!(!internal("https://www.shvia.org/"));
+        assert!(!internal("https://mem.shvia.org/"));
         assert!(!internal("https://evil.shvia.org/"));
         assert!(!internal("https://blue3.com.br/"));
         assert!(!internal("https://evil.blue3.com.br/"));
