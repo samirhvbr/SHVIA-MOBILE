@@ -163,18 +163,99 @@ reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
   falta também o entitlement `associated-domains`.
 - [~] Câmera+mic (feito) · tela offline nativa (feita).
 
-### M4 — Publicação nas lojas → **checklist executável em [../docs/testflight-checklist.md](../docs/testflight-checklist.md)**
+### M4 — Publicação nas lojas — **FASE ATIVA (30/07)** → runbook em [../docs/testflight-checklist.md](../docs/testflight-checklist.md) §0
 Doc criado (15/07) em 2 partes: **Parte 1 = TestFlight interno** (fecha o M2, sem
 4.2) e **Parte 2 = App Store pública** (4.2, nutrition label, screenshots). Já
 adiantado do Linux (mobile 0.3.11): `PrivacyInfo.xcprivacy` (sem tracking,
 UserDefaults CA92.1), `ITSAppUsesNonExemptEncryption=false`, `minimumSystemVersion
-14.0` + `category productivity`. Falta o lado Mac (build/upload) e itens `[ASC]`.
+14.0` + `category productivity`.
+
+**Reordenado em 30/07 com o alvo "publicar amanhã".** O que trava deixou de ser o
+build e passou a ser a papelada e o `gen/apple` defasado:
+1. 🔴 **URL de política de privacidade + suporte** — não existem; sem a primeira o
+   App Store Connect **não deixa submeter**. Repo `SHVIA-SITE`.
+2. 🔴 **`tauri ios init` no Mac** — conserta de uma vez o `Info.plist` sem
+   `NSFaceIDUsageDescription` (crash na 1ª tela), o `PrivacyInfo.xcprivacy` fora
+   do alvo e a versão `0.2.6`.
+3. 🟡 **Smoke-test on-device do item 10 (biometria)** — caminho nunca exercido em iOS.
+4. Build/upload + itens `[ASC]` (ficha, screenshots, nutrition label, idade).
 
 ### M5 — Responsividade mobile do ShvIA web (repo `SHVIA`)
 `viewport`, `env(safe-area-inset-*)`, teclado, nav/sidebar colapsável, alvos de toque.
 Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
+
+### 🚀 Revisão de 30/07 — véspera da publicação
+
+Revisão pedida pelo Samir com o alvo "publicar amanhã". **Verde no host** (rodado
+hoje, 30/07): `cargo check` ✓ · `cargo test` **3/3** ✓ · `tsc` + `vite build` ✓ ·
+`npm audit` **0 vulnerabilidades** ✓ · `ai.shvia.org/up` **200 em 32 ms** ✓. O
+`version.md` estava **0.5.2** e o resto da árvore em **0.5.1** — o `sync-version`
+só roda no `prebuild`, então quem não buildou não propagou; reconciliado em 0.5.3.
+
+**Achados novos, do mais grave pro menos:**
+
+1. 🔴 **`gen/apple` defasado desde 14/07 — três problemas no MESMO arquivo.** O
+   `INFOPLIST_FILE` do alvo Xcode é `gen/apple/shvia-mobile_iOS/Info.plist`
+   (conferido no `project.pbxproj`), e ele foi gerado na 0.3.0 a partir do
+   `Info.ios.plist` **daquela** data. Tudo que o `Info.ios.plist` ganhou depois
+   nunca chegou lá:
+   - **`NSFaceIDUsageDescription` ausente** (entrou na 0.4.0). Sem essa chave o
+     iOS **encerra o processo** na 1ª chamada de `evaluatePolicy` — que neste app
+     é o botão "Ativar Face ID" do card de 1ª execução, **a primeira tela que um
+     revisor da Apple vê**. Como o único build que rodou em aparelho foi o
+     0.3.13/0.3.14 (**anterior** à biometria), esse caminho nunca foi exercido em
+     iOS de verdade. Era o risco nº 1 da submissão.
+   - **`ITSAppUsesNonExemptEncryption` ausente** (entrou na 0.3.11) → a pergunta
+     de conformidade de exportação volta a cada upload.
+   - **Versão literal `0.2.6`** no `Info.plist` **e** no `project.yml`, com o app
+     em 0.5.x (o gotcha do checklist §1.3, agora com causa entendida: não é o
+     build que "esquece", é a cópia gerada que nunca foi refeita).
+
+   Corrigido à mão na **0.5.3** (as três chaves + versão), mas a cura de raiz é
+   **rodar `tauri ios init` de novo no Mac**, que regenera o `gen/apple` inteiro
+   a partir das fontes atuais.
+2. 🔴 **`PrivacyInfo.xcprivacy` NÃO está no alvo Xcode.** O arquivo existe em
+   `gen/apple/shvia-mobile_iOS/` desde a 0.3.11, mas **`grep PrivacyInfo
+   project.pbxproj` não acha nada** — o `.xcodeproj` é de 14/07, anterior ao
+   arquivo. Ou seja: o privacy manifest **não entra no bundle**. Isso confirma o
+   item aberto do checklist §1.2 e é outra coisa que o `ios init` conserta (o
+   `project.yml` já lista `shvia-mobile_iOS` como source; falta o XcodeGen rodar).
+   Não dá pra consertar com segurança do Linux — editar `project.pbxproj` à mão
+   arrisca quebrar o build inteiro por ganho zero, já que o `init` refaz.
+3. 🟡→🟢 **Sem URL de política de privacidade — bloqueio DURO do App Store
+   Connect. RESOLVIDO NO MESMO DIA.** Não existia página de privacidade nem de
+   suporte em lugar nenhum. Escritas em 30/07 no `SHVIA-SITE` **0.4.0**
+   (`privacidade.html` + `suporte.html`), fundamentadas no código real do
+   SHVIA-WEB — colunas de `users`, BYOK por usuário, `data_locality`
+   (on-prem/EUA/China), zeragem do RAG fora do on-prem, `maskOutboundPii`,
+   toggle `lgpd_strict`, retenção de 180 dias agendada em `routes/console.php`.
+   A tensão com o ADR-001 do site ("nada de Blue3 na landing") virou o **ADR-014**
+   de lá: a exceção vale só para o parágrafo de identificação legal.
+   **Sobra do Samir:** razão social + CNPJ (a página tem `[PREENCHER]` e o
+   harness trava o deploy até preencher), criar `privacidade@`/`suporte@shvia.org`
+   e publicar. Ver o checklist §0.
+4. 🟡 **Push segue 0% no cliente.** Reconferido hoje: o servidor está pronto
+   (`POST`/`DELETE /push/token` no `routes/web.php` do SHVIA-WEB, `config/apns.php`,
+   `APNS_*` no `.env.example` já com `TEAM_ID=S65UBCTPN5` e
+   `BUNDLE_ID=cloud.blue3.shvia`), mas **`grep __shviaPushToken` no
+   `public/js/app.js` não acha nada** e a casca não tem entitlement nem registro.
+   É o gancho mais forte contra a 4.2 e continua sendo a maior aposta em aberto.
+5. 🟢 **Universal Links: reconfirmado impossível hoje.** Nem
+   `public/.well-known/apple-app-site-association` nem `assetlinks.json` no
+   SHVIA-WEB 2.88.8. Sai da conversa de amanhã.
+6. 🟢 **Ícones OK.** Os 18 do `AppIcon.appiconset` estão sem canal alpha,
+   incluindo o `AppIcon-512@2x.png` (1024×1024 RGB) — o gotcha da 0.3.14 está
+   resolvido e não volta.
+7. 🟢 **Android `tauri.properties` se autocura.** Está em `versionName 0.2.2 /
+   versionCode 2002`, mas o próprio arquivo se declara autogerado e o Tauri o
+   reescreve a cada build a partir do `tauri.conf.json` — ao contrário do iOS,
+   aqui a defasagem é cosmética.
+8. 🟢 **Lacuna conhecida do Android (não bloqueia iOS):** o `AndroidManifest.xml`
+   só declara `INTERNET` — falta `RECORD_AUDIO` e `CAMERA` para o ditado e o
+   anexo por foto funcionarem na WebView. Some junto com o smoke-test on-device
+   que já estava pendente.
 
 ### 🔎 Revisão de 28/07 — o que o mobile deixou passar enquanto o resto andava
 
@@ -234,13 +315,24 @@ revisão achou, do mais caro pro mais barato:
   confirmada: portrait (390×844) e desktop (1280×800) idênticos. **2.19.2
   DEPLOYADA (15/07)** — confirmado: `/api/v1/health` version.app=2.19.2 e os
   assets em produção têm o gatilho (CSS 17× / JS 3× `max-height: 480px`).
-- **Próximo (revisto em 28/07):** **push é o item de maior alavancagem** — o
-  servidor já espera o cliente há 12 dias e é ele que sustenta a defesa da 4.2. A
-  parte da casca (entitlement + permissão + injetar o token) fecha aqui no Linux;
-  só o teste ponta-a-ponta pede Mac/aparelho. Em paralelo, o de menor esforço:
-  fechar smoke-test itens 4–7 (TTS/mic/anexos/links) no iPhone físico via
-  TestFlight — mic/câmera reais que o simulador fingia. Android on-device pendente.
-  Ver checklist §2.1 e a fase M3.
+- **Próximo (revisto em 30/07 — modo publicação):** o caminho crítico deixou de
+  ser "que recurso construir" e passou a ser **"o que impede o upload de sair"**.
+  Ordem de amanhã no
+  [../docs/testflight-checklist.md](../docs/testflight-checklist.md) §0, resumida:
+  1. **Página de privacidade + suporte no `shvia.org`** — bloqueio duro do App
+     Store Connect, e o mais barato de tirar do caminho.
+  2. **`tauri ios init` no Mac** — refaz o `gen/apple` e mata de uma vez o
+     `Info.plist` defasado (Face ID!), o `PrivacyInfo.xcprivacy` fora do alvo e a
+     versão 0.2.6.
+  3. **Smoke-test no iPhone físico, com o item 10 (biometria) primeiro** — é o
+     caminho que nunca rodou em iOS e o que um revisor vê primeiro.
+  4. **Build + upload + TestFlight interno** (sem beta review) → só então decidir
+     a submissão pública.
+  **Push continua sendo o item de maior alavancagem do produto**, mas não cabe
+  entre hoje e amanhã: exige Swift no `gen/apple`, entitlement, capability no
+  portal, `APNS_*` em produção e o `POST /push/token` no front do SHVIA-WEB — e
+  nada disso se testa fora do aparelho. Ele é a decisão "submeter já e arriscar a
+  4.2" × "segurar uma semana e submeter com push".
   **Gotchas da 1ª submissão iOS documentados** em
   [../docs/testflight-checklist.md](../docs/testflight-checklist.md): buildar SÓ
   pelo terminal (Xcode GUI = `npm: command not found`), ícone 1024 sem canal alpha

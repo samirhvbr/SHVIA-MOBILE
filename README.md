@@ -14,10 +14,22 @@ System WebView). Irmão do `SHVIA-DESKTOP` (desktop) e do `SHVIA` (servidor Lara
 com biometria (Face ID/Touch ID) na 0.4.0 e o domínio próprio `ai.shvia.org` na
 0.5.0. Android **builda** (APK/AAB no Linux), mas ainda não rodou em aparelho.
 
-**Próximo: push (APNs)** — o lado servidor está pronto no SHVIA-WEB desde a
-2.51.0 e falta o lado cliente; é ele que sustenta a defesa da regra **4.2** da
-App Store. Estado completo e o que a revisão de 28/07 achou:
-[.continue/escopo-mobile.md](.continue/escopo-mobile.md) §5.
+**Em publicação (revisão de 30/07).** O caminho crítico agora é o M4. Ordem de
+execução no **[docs/testflight-checklist.md](docs/testflight-checklist.md) §0**;
+o que a revisão achou, em [.continue/escopo-mobile.md](.continue/escopo-mobile.md) §5.
+Em uma linha:
+
+- 🟢 **Privacidade e suporte:** escritas em 30/07 no `SHVIA-SITE` 0.4.0
+  (`shvia.org/privacidade.html` e `/suporte.html`) — era o bloqueio duro do App
+  Store Connect. Falta razão social + CNPJ, as caixas de e-mail e o deploy.
+- 🔴 **`gen/apple` é de 14/07** e ficou defasado: faltava `NSFaceIDUsageDescription`
+  (o iOS **encerra o app** sem ela, no card de Face ID da 1ª execução), faltava
+  `ITSAppUsesNonExemptEncryption`, a versão estava em `0.2.6` e o
+  `PrivacyInfo.xcprivacy` não está no alvo Xcode. Remendado na 0.5.3; a cura é
+  `tauri ios init` no Mac.
+- 🟡 **Push (APNs) segue 0% no cliente** — servidor pronto desde a 2.51.0, mas nem
+  a casca nem o front do SHVIA-WEB registram token. É a defesa mais forte contra a
+  regra **4.2** e a aposta em aberto da submissão pública.
 
 ## Build
 

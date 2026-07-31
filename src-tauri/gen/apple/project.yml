@@ -52,8 +52,12 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        CFBundleShortVersionString: 0.2.6
-        CFBundleVersion: "0.2.6"
+        # Congelados no `tauri ios init` de 14/07 (app estava em 0.2.6); atualizados
+        # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
+        # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
+        # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
+        CFBundleShortVersionString: 0.5.3
+        CFBundleVersion: "0.5.3"
     entitlements:
       path: shvia-mobile_iOS/shvia-mobile_iOS.entitlements
     scheme:
