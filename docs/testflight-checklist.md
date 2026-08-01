@@ -72,10 +72,18 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
       rodar de novo só reintroduziria o gotcha do alpha e o reset do navy.
 - [x] `PrivacyInfo.xcprivacy` em Copy Bundle Resources — conferido no pbxproj e
       no IPA final (não foi preciso abrir o Xcode GUI).
-- [x] **Gotcha novo (31/07): o cache do `target/` com caminhos velhos também
-      morde o build de RELEASE iOS** — `failed to read plugin permissions
-      .../x/SHVIA-MOBILE/...` (caminho antigo). Mesma cura da revisão de 28/07,
-      agora no target ios: `rm -rf src-tauri/target/{release,aarch64-apple-ios/release}/{build,.fingerprint}`.
+- [x] **Gotcha novo (31/07): o cache do `target/` com caminhos velhos morde CADA
+      target/perfil separadamente** — `failed to read plugin permissions
+      .../x/SHVIA-MOBILE/...` (caminho antigo). Apareceu no release de device
+      (`aarch64-apple-ios/release`) E depois de novo no dev de simulador
+      (`aarch64-apple-ios-sim/debug`). Cura de uma vez, cobrindo host + device +
+      sim, debug + release:
+      ```bash
+      cd src-tauri/target
+      rm -rf {debug,release}/{build,.fingerprint} \
+             aarch64-apple-ios/{debug,release}/{build,.fingerprint} \
+             aarch64-apple-ios-sim/{debug,release}/{build,.fingerprint}
+      ```
 - [x] `[Mac]` **Build de distribuição OK (31/07):**
       `npm run tauri ios build -- --export-method app-store-connect` →
       `src-tauri/gen/apple/build/arm64/ShvIA.ipa` (18 MB). IPA auditado:
@@ -93,11 +101,12 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
 - [ ] `[Mac]` Build + upload (§1.4) → `[ASC]` TestFlight interno (sem beta review).
 - [ ] `[ASC]` Ficha da loja: metadados, screenshots, nutrition label, classificação
       etária (§2.2).
-- [ ] **DECISÃO: submeter à review pública já, ou segurar até ter push?** O app é
-      shell fino, então a **4.2 se aplica** (§2.1). O que existe hoje de valor
-      nativo é Face ID + câmera/mic + tela offline; **push não existe no cliente**
-      e é o argumento mais forte. Rejeição não custa dinheiro nem queima a conta —
-      custa os dias do ciclo de review.
+- [x] **DECISÃO (Samir, 31/07): SEGURAR ~1 semana e submeter COM push.** Alvo:
+      **07/08/2026**. Tracking: [issue #1](https://github.com/samirhvbr/SHVIA-MOBILE/issues/1)
+      (checklist da semana + status diário comentado por rotina agendada às 9h)
+      + lembrete no Calendar em 07/08. Caixas `privacidade@`/`suporte@shvia.org`
+      criadas em 31/07. TestFlight interno segue valendo AGORA (IPA 0.5.4 no
+      Transporter) para o smoke on-device enquanto o push é construído.
 
 ---
 

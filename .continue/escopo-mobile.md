@@ -280,6 +280,14 @@ Executado no Mac, na ordem do runbook §0 do checklist:
 primeiro · upload do IPA (Organizer/Transporter — sem chave ASC de API no Mac) ·
 ficha da loja no ASC · decisão "submeter já × esperar o push".
 
+**Smoke no simulador (31/07, iPhone 17 Pro):** app lança sem crash ✓ · login
+remoto renderiza em coluna única ✓ · caminho "sem biometria disponível" degrada
+graciosamente (main.ts:160 pula o gate — simulador sem Face ID enrolled) ✓ ·
+caminho COM Face ID pendente (exige Features ▸ Face ID ▸ Enrolled no menu do
+Simulator — CLI não controla; ou o aparelho físico). Achado de M5 no smoke: o
+botão "Exportar conversa" da topbar poluía o mobile → escondido no gatilho
+mobile em **SHVIA-WEB 2.89.5** (chat-workspace.css, pedido do Samir).
+
 ### 🔎 Revisão de 28/07 — o que o mobile deixou passar enquanto o resto andava
 
 O roadmap abaixo estava congelado em **16/07**. Nesse intervalo o **SHVIA-WEB foi
