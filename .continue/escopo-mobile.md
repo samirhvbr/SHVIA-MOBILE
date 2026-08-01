@@ -144,20 +144,31 @@ reusar a infra APNs da Blue3 (.p8/App Group já existem). Ver checklist §2.1.
   de sessão (é acesso LOCAL, modelo Blue3). **Verificado no host:** `cargo check`
   (host **e** `aarch64-apple-ios`) + `tsc`/`vite build` passam. **Pendente:** Face ID
   real no simulador/aparelho (novo item do smoke-test — só se valida com device).
-- [ ] **Push (APNs) — DESBLOQUEADO PELA METADE (revisão de 28/07).** O **lado
-  servidor ficou pronto no SHVIA-WEB 2.51.0, em 16/07** — mesmo dia em que esta
-  linha foi escrita dizendo que estava bloqueado nele. Já existem lá `POST` e
-  `DELETE /push/token` (sessão same-origin, `{token, platform}`), `ApnsClient`
-  ES256/HTTP2, `PushService`, job de fila, `php artisan push:test` e 11 testes
-  verdes (`~/x/SHVIA/SHVIA-WEB/docs/PUSH/PUSH-APNS-20260716.md`). **O atraso agora é
-  do cliente**, em duas pontas: (a) **esta casca** — entitlement `aps-environment`,
-  permissão + `registerForRemoteNotifications`, injetar o token na página remota
-  pelo mesmo `webview.eval` do `__shviaShellVersion`, e navegar pro `data.route` no
-  tap; (b) **front do SHVIA-WEB** — ler `window.__shviaPushToken` e postar em
-  `/push/token` (cookie + CSRF), com `DELETE` no logout. **Restam do Samir, fora do
-  código:** capability **Push Notifications** no App ID `cloud.blue3.shvia` e as
-  `APNS_*` no `.env` de produção. Nota: **App Group não é preciso** para alerta
-  simples — esta linha o exigia à toa.
+- [~] **Push (APNs) — CÓDIGO COMPLETO nas duas pontas (01/08, mobile 0.6.0 +
+  web 2.91.7); falta portal/env/smoke.** Servidor pronto desde a 2.51.0
+  (16/07). O que entrou em 01/08:
+  - **Casca:** plugin interno **`plugins/tauri-plugin-shvia-push`** (padrão do
+    biometric; iOS-only, registrado atrás de `#[cfg(target_os = "ios")]`).
+    O app do Tauri NÃO tem AppDelegate Swift (o delegate é classe ObjC do tao)
+    → o plugin ADICIONA os seletores `didRegisterForRemoteNotifications...`/
+    `didFail...` via `class_addMethod` no `load()` (pesquisa 01/08: é o padrão
+    dos plugins de comunidade e do PR draft tauri#11652; não há plugin oficial).
+    Token sobe por `Channel` → Rust guarda em estado + injeta
+    `window.__shviaPushToken` (+ `__shviaPushPlatform` + evento
+    `shvia:push-token`) na página remota a cada page load; tap em notificação
+    entrega `userInfo.route` → navegação SANITIZADA (só caminho relativo).
+    Permissão pedida no 1º load REMOTO (usuário logado, com contexto), em
+    thread própria (o comando bloqueia até o usuário decidir). Página remota
+    segue sem NENHUM comando nativo (ADR-001). Entitlement `aps-environment`
+    = `development` no `.entitlements` (o export p/ ASC troca p/ production).
+    `cargo check` host + `aarch64-apple-ios` ✓.
+  - **Front (SHVIA-WEB 2.91.7):** `registerPushToken`/`unregisterPushToken`
+    no app.js — boot + evento, POST sessão+CSRF, DELETE no logout.
+  **Restam do Samir, fora do código:** capability **Push Notifications** no
+  App ID `cloud.blue3.shvia` (portal) e `APNS_*` no `.env` de produção
+  (`APNS_PRODUCTION=true` p/ TestFlight/loja!). Depois: smoke on-device
+  (`php artisan push:test` → notificação no aparelho → tap navega).
+  Nota: App Group não é preciso para alerta simples.
 - [ ] **Universal Links** — segue bloqueado: conferido em 28/07, **nem
   `apple-app-site-association` nem `assetlinks.json` existem no SHVIA-WEB 2.88.4**;
   falta também o entitlement `associated-domains`.

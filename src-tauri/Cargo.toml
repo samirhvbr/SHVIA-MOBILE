@@ -1,6 +1,6 @@
 [package]
 name = "shvia-mobile"
-version = "0.5.6"
+version = "0.6.0"
 description = "ShvIA Mobile — cliente iOS/Android do ShvIA (shell fino Tauri 2)"
 authors = ["Samir Hanna Verza <samirhv@me.com>"]
 edition = "2021"
@@ -33,3 +33,7 @@ time = "=0.3.41"
 # — só entra no build iOS/Android; o `cargo check` do host nem o baixa.
 [target.'cfg(any(target_os = "ios", target_os = "android"))'.dependencies]
 tauri-plugin-biometric = "2"
+
+[target.'cfg(target_os = "ios")'.dependencies]
+tauri-plugin-shvia-push = { path = "../plugins/tauri-plugin-shvia-push" }
+serde_json = "1"

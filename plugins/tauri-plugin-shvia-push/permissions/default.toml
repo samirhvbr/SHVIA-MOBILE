@@ -1,0 +1,8 @@
+"$schema" = "schemas/schema.json"
+
+[default]
+description = """
+Permissões do push do ShvIA Mobile. Os comandos são chamados apenas pelo Rust
+da casca (run_mobile_plugin) — nenhuma capability de webview os referencia.
+"""
+permissions = ["allow-watch-token", "allow-request-permission"]

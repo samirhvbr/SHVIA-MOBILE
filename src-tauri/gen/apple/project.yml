@@ -56,8 +56,8 @@ targets:
         # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
         # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
         # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
-        CFBundleShortVersionString: 0.5.4
-        CFBundleVersion: "0.5.4"
+        CFBundleShortVersionString: 0.6.0
+        CFBundleVersion: "0.6.0"
     entitlements:
       path: shvia-mobile_iOS/shvia-mobile_iOS.entitlements
     scheme:

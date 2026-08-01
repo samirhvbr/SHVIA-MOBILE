@@ -59,7 +59,11 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
       **(b)** ✅ `PrivacyInfo.xcprivacy` entrou no alvo (PBXBuildFile "in
       Resources" no `project.pbxproj` — conferido por grep, 4 refs) e **está no
       payload do IPA** (auditado por unzip);
-      **(c)** ✅ versão vem das fontes (0.5.x).
+      **(c)** ✅ versão vem das fontes (0.5.x). **Refinado em 01/08:** o
+      `tauri ios build` INJETA a versão do `tauri.conf.json` no Info.plist do
+      archive (um build com gen/apple em 0.5.4 e conf em 0.5.6 produziu IPA
+      0.5.6) — o literal do `gen/apple` importa menos do que se acreditava;
+      manter os dois em sincronia mesmo assim (XcodeGen usa o project.yml).
       **(a)** ⚠️ **DESCOBERTA que muda a regra: o `ios init` NÃO mescla o
       `Info.ios.plist` no `gen/apple/.../Info.plist`** (a crença da 0.3.0 não
       vale mais). O init de 31/07 REMOVEU as 4 chaves (mic, câmera, Face ID,

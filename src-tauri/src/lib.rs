@@ -14,13 +14,48 @@
 //! (iOS/Android já têm voz pt-BR), então **não** precisa da ponte espeak do
 //! Linux/WebKitGTK. Links externos abrem no navegador do SO via `on_navigation`.
 
-use tauri::{webview::PageLoadEvent, WebviewUrl, WebviewWindowBuilder};
+use std::sync::Mutex;
+
+use tauri::{webview::PageLoadEvent, Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_opener::OpenerExt;
 
+#[cfg(target_os = "ios")]
+use std::sync::atomic::{AtomicBool, Ordering};
+#[cfg(target_os = "ios")]
+use tauri_plugin_shvia_push::ShviaPushExt;
+
+/// Último device token do APNs (M3/push). Vive em estado da casca para ser
+/// REINJETADO em cada page load da página remota — o token pode chegar antes
+/// da página (cold start) ou a página pode recarregar depois do token.
+struct PushToken(Mutex<Option<String>>);
+
+/// Pede a permissão de notificação UMA vez por execução, e só no primeiro
+/// load REMOTO (usuário logado = momento com contexto, não no splash).
+#[cfg(target_os = "ios")]
+struct PushPermissionAsked(AtomicBool);
+
+/// JS que entrega o token à página remota. O front do ShvIA web
+/// (`registerPushToken` no app.js) escuta o evento e faz o POST /push/token
+/// com a sessão. Token validado como hex antes de entrar no JS.
+fn push_token_js(token: &str) -> Option<String> {
+    if token.is_empty() || !token.chars().all(|c| c.is_ascii_hexdigit()) {
+        return None;
+    }
+    Some(format!(
+        "window.__shviaPushPlatform='ios';window.__shviaPushToken='{token}';window.dispatchEvent(new Event('shvia:push-token'));"
+    ))
+}
+
 /// Injetado em cada página carregada (`on_page_load`): uma **tarja "Sistema
-/// Offline"** que aparece quando o WebView perde conexão (eventos `online`/
-/// `offline`) e some ao reconectar; clicável para recarregar. O `eval` do Tauri
-/// roda fora da CSP da página, então funciona na página remota do ShvIA.
+/// Offline"** clicável para recarregar. O `eval` do Tauri roda fora da CSP da
+/// página, então funciona na página remota do ShvIA.
+///
+/// v2 (01/08/2026, espelhando o desktop): `navigator.onLine` vira só GATILHO DE
+/// SUSPEITA — a tarja apenas aparece se uma sonda REAL ao `/up` (health barato
+/// do Laravel) falhar, e re-sonda a cada 15 s até o servidor voltar. O bug que
+/// motivou foi no WebKitGTK do desktop (GNetworkMonitor mente com VPN/rotas
+/// incomuns); o WKWebView é mais confiável, mas as cascas são espelhadas e a
+/// sonda é estritamente melhor nos dois.
 const OFFLINE_BANNER_JS: &str = r#"(function () {
   if (window.__shviaOffline) return;
   window.__shviaOffline = true;
@@ -33,8 +68,20 @@ const OFFLINE_BANNER_JS: &str = r#"(function () {
   s.font='600 14px system-ui,sans-serif'; s.letterSpacing='.02em'; s.cursor='pointer';
   s.boxShadow='0 2px 8px rgba(0,0,0,.35)';
   bar.addEventListener('click', function () { location.reload(); });
-  function update(){ bar.style.display = navigator.onLine ? 'none' : 'block'; }
   function mount(){ var r=document.body||document.documentElement; if(r&&!document.getElementById('shvia-offline-bar')) r.appendChild(bar); }
+  var checking=false, timer=null;
+  function show(){ bar.style.display='block'; if(!timer) timer=setInterval(check, 15000); }
+  function hide(){ bar.style.display='none'; if(timer){ clearInterval(timer); timer=null; } }
+  function check(){
+    if (checking) return; checking = true;
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var to = setTimeout(function(){ if (ctl) ctl.abort(); }, 5000);
+    fetch('/up', { cache:'no-store', signal: ctl && ctl.signal })
+      .then(function(r){ if (r.ok) { hide(); } else { show(); } })
+      .catch(function(){ show(); })
+      .finally(function(){ clearTimeout(to); checking = false; });
+  }
+  function update(){ if (navigator.onLine) { hide(); } else { check(); } }
   mount(); update();
   window.addEventListener('online', update);
   window.addEventListener('offline', update);
@@ -146,8 +193,21 @@ pub fn run() {
         builder = builder.plugin(tauri_plugin_biometric::init());
     }
 
+    // Push (M3/ADR-002): plugin interno iOS-only. O token do APNs sobe do
+    // Swift por Channel e é injetado na página remota; a página continua sem
+    // NENHUM comando nativo exposto (quem fala com o plugin é o Rust daqui).
+    // Android (FCM) fica para depois — por isso `target_os = "ios"`, não `mobile`.
+    #[cfg(target_os = "ios")]
+    {
+        builder = builder.plugin(tauri_plugin_shvia_push::init());
+    }
+
     builder
         .setup(|app| {
+            app.manage(PushToken(Mutex::new(None)));
+            #[cfg(target_os = "ios")]
+            app.manage(PushPermissionAsked(AtomicBool::new(false)));
+
             let handle = app.handle().clone();
             WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
                 .title("ShvIA")
@@ -168,15 +228,97 @@ pub fn run() {
                     if let PageLoadEvent::Finished = payload.event() {
                         let host = payload.url().host_str().unwrap_or_default().to_owned();
                         if host != "localhost" && host != "tauri.localhost" {
-                            let _ = webview.eval(format!(
+                            let mut js = format!(
                                 "window.__shviaShellVersion={:?};{}",
                                 env!("CARGO_PKG_VERSION"),
                                 OFFLINE_BANNER_JS
-                            ));
+                            );
+                            // Token de push conhecido? Reinjetar a cada load —
+                            // o front (registerPushToken) é idempotente.
+                            if let Some(tok) =
+                                webview.state::<PushToken>().0.lock().unwrap().clone()
+                            {
+                                if let Some(tjs) = push_token_js(&tok) {
+                                    js.push_str(&tjs);
+                                }
+                            }
+                            let _ = webview.eval(js);
+
+                            // 1º load remoto = usuário chegou ao ShvIA logado:
+                            // hora de pedir a permissão de notificação (com
+                            // contexto, não no splash). `requestPermission`
+                            // BLOQUEIA até o usuário decidir → thread própria.
+                            #[cfg(target_os = "ios")]
+                            {
+                                let asked = webview.state::<PushPermissionAsked>();
+                                if !asked.0.swap(true, Ordering::SeqCst) {
+                                    let wv = webview.clone();
+                                    std::thread::spawn(move || {
+                                        let _ = wv.shvia_push().request_permission();
+                                    });
+                                }
+                            }
                         }
                     }
                 })
                 .build()?;
+
+            // Canal de eventos do push (iOS): o Swift entrega token/rota/erro
+            // aqui; token vai pro estado + eval; tap navega (rota sanitizada).
+            #[cfg(target_os = "ios")]
+            {
+                let handle = app.handle().clone();
+                let channel = tauri::ipc::Channel::new(move |event| {
+                    let tauri::ipc::InvokeResponseBody::Json(json) = event else {
+                        return Ok(());
+                    };
+                    let Ok(v) = serde_json::from_str::<serde_json::Value>(&json) else {
+                        return Ok(());
+                    };
+                    match v.get("type").and_then(|t| t.as_str()) {
+                        Some("token") => {
+                            if let Some(tok) = v.get("token").and_then(|t| t.as_str()) {
+                                if let Some(js) = push_token_js(tok) {
+                                    *handle.state::<PushToken>().0.lock().unwrap() =
+                                        Some(tok.to_string());
+                                    if let Some(w) = handle.get_webview_window("main") {
+                                        let _ = w.eval(js);
+                                    }
+                                }
+                            }
+                        }
+                        Some("route") => {
+                            // Tap em notificação. Só caminho relativo simples:
+                            // nada de URL absoluta/esquema/escape — a rota vem
+                            // do payload do push e não é confiável por padrão.
+                            if let Some(route) = v.get("route").and_then(|r| r.as_str()) {
+                                let segura = route.starts_with('/')
+                                    && !route.starts_with("//")
+                                    && route.chars().all(|c| {
+                                        c.is_ascii_graphic()
+                                            && !matches!(c, '"' | '\'' | '\\' | '<' | '>' | '`')
+                                    });
+                                if segura {
+                                    if let Some(w) = handle.get_webview_window("main") {
+                                        let _ = w.eval(format!("location.assign({route:?})"));
+                                    }
+                                }
+                            }
+                        }
+                        Some("error") => {
+                            // Sem token não há push; o app segue normal.
+                            eprintln!(
+                                "shvia-push: {}",
+                                v.get("message").and_then(|m| m.as_str()).unwrap_or("erro")
+                            );
+                        }
+                        _ => {}
+                    }
+                    Ok(())
+                });
+                let _ = app.shvia_push().watch_token(channel);
+            }
+
             Ok(())
         })
         .run(tauri::generate_context!())

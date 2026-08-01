@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-watch-token"
+description = "Enables the watch_token command without any pre-configured scope."
+commands.allow = ["watch_token"]
+
+[[permission]]
+identifier = "deny-watch-token"
+description = "Denies the watch_token command without any pre-configured scope."
+commands.deny = ["watch_token"]
