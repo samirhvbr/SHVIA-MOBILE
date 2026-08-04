@@ -40,5 +40,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>O microfone é usado para ditar mensagens por voz no chat.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>A câmera é usada para tirar fotos e anexá-las ao chat.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>O Face ID desbloqueia o ShvIA localmente, sem digitar a senha a cada acesso.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
