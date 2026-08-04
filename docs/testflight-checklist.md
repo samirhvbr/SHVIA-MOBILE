@@ -150,7 +150,7 @@ verdade, e só depois decidir o caminho da loja. As duas partes abaixo refletem 
 ### 1.1 Identidade & assinatura
 - [x] `bundle.iOS.developmentTeam = S65UBCTPN5` (`tauri.conf.json`)
 - [x] Bundle ID `cloud.blue3.shvia` (mesmo do desktop)
-- [x] `minimumSystemVersion: "14.0"` + `category: productivity` (0.3.11)
+- [x] `minimumSystemVersion: "15.0"` + `category: productivity` (14.0 na 0.3.11; elevado na 0.6.2 pelo aviso 90068 da Apple — exigência a partir da primavera de 2027; iOS 15 roda nos MESMOS aparelhos que o 14, custo zero de cobertura. Fontes: tauri.conf.json + project.yml deploymentTarget + Package.swift do plugin push)
 - [x] Ícones iOS gerados (`src-tauri/icons/ios/`, desde 0.2.2)
 - [ ] `[Mac]` Xcode logado na conta Apple da Blue3 (Settings ▸ Accounts) e, na
       1ª vez, abrir `gen/apple/*.xcodeproj` ▸ Signing & Capabilities pra confirmar
