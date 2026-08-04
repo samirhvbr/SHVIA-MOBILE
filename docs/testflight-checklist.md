@@ -88,11 +88,30 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
              aarch64-apple-ios/{debug,release}/{build,.fingerprint} \
              aarch64-apple-ios-sim/{debug,release}/{build,.fingerprint}
       ```
-- [x] `[Mac]` **Build de distribuição OK (31/07):**
+- [x] `[Mac]` **Build de distribuição OK (31/07; refeito 04/08 como 0.6.1):**
       `npm run tauri ios build -- --export-method app-store-connect` →
-      `src-tauri/gen/apple/build/arm64/ShvIA.ipa` (18 MB). IPA auditado:
-      PrivacyInfo no payload, `NSFaceIDUsageDescription`,
-      `ITSAppUsesNonExemptEncryption=false`, versão correta.
+      `src-tauri/gen/apple/build/arm64/ShvIA.ipa`.
+- [x] **Gotcha 04/08 (Apple recusou o upload do 0.6.0 com "Invalid bundle
+      structure"): `tauri ios init` rodado com o `Externals/libapp.a` JÁ
+      construído faz o XcodeGen copiar a lib de 56 MB para o Copy Bundle
+      Resources → `ShvIA.app/libapp.a` no IPA → 409 no Transporter.** Cura de
+      raiz no project.yml: `excludes: ["**/*.a"]` no source `Externals` (o
+      LINK é o `dependencies: framework libapp.a`, não é afetado). O init de
+      14/07 escapou por sorte: a lib ainda não existia na árvore.
+- [x] **Gotcha 04/08 (nº 2): o `.entitlements` é GERADO pelo XcodeGen — edição
+      manual no arquivo morre no próximo `xcodegen generate`** (foi o que
+      apagou o `aps-environment` do primeiro build 0.6.1). Fonte da verdade:
+      bloco `entitlements.properties` do project.yml.
+- [ ] **AUDITORIA PRÉ-UPLOAD (obrigatória antes de todo Deliver):**
+      ```bash
+      IPA=src-tauri/gen/apple/build/arm64/ShvIA.ipa
+      unzip -l $IPA | grep -cE 'libapp|\.a$'        # TEM que ser 0
+      unzip -l $IPA | grep -c PrivacyInfo            # TEM que ser 1
+      mkdir -p /tmp/ipa && unzip -qo $IPA -d /tmp/ipa
+      codesign -d --entitlements :- /tmp/ipa/Payload/ShvIA.app | grep aps-environment  # production
+      plutil -p /tmp/ipa/Payload/ShvIA.app/Info.plist | grep -E 'ShortVersion|FaceID|NonExempt'
+      rm -rf /tmp/ipa
+      ```
 
 ### Validação no aparelho — o que nunca rodou em iOS
 - [ ] `[Mac]` **Smoke-test item 10 (biometria) PRIMEIRO** — Face ID é o caminho

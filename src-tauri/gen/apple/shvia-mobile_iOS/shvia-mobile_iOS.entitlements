@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Push (M3): 'development' no build local; o export para App Store
-	     Connect re-assina com o profile de distribuição e troca para
-	     'production' sozinho. Requer a capability Push Notifications no App ID
-	     cloud.blue3.shvia (portal — passo do Samir). Conferir no
-	     DistributionSummary.plist/codesign após o export. -->
 	<key>aps-environment</key>
 	<string>development</string>
 </dict>

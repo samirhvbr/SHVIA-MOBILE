@@ -31,7 +31,14 @@ targets:
     sources:
       - path: Sources
       - path: Assets.xcassets
+      # Externals guarda os .a do Rust POR BUILD. Sem o excludes, um `tauri ios
+      # init` rodado com a lib já construída faz o XcodeGen copiá-la para o
+      # Copy Bundle Resources → ShvIA.app/libapp.a no IPA → Apple recusa o
+      # upload com "Invalid bundle structure" (visto em 04/08). O LINK da lib
+      # não passa por aqui: é o dependencies: framework libapp.a (embed: false).
       - path: Externals
+        excludes:
+          - "**/*.a"
       - path: shvia-mobile_iOS
       - path: assets
         buildPhase: resources
@@ -56,10 +63,16 @@ targets:
         # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
         # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
         # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
-        CFBundleShortVersionString: 0.6.0
-        CFBundleVersion: "0.6.0"
+        CFBundleShortVersionString: 0.6.1
+        CFBundleVersion: "0.6.1"
+    # ATENÇÃO: o XcodeGen GERA o arquivo .entitlements a partir daqui a cada
+    # regeneração — edição manual no arquivo morre no próximo generate (foi o
+    # que apagou o aps-environment em 04/08). A fonte da verdade é ESTE bloco.
+    # 'development' vira 'production' no export para App Store Connect.
     entitlements:
       path: shvia-mobile_iOS/shvia-mobile_iOS.entitlements
+      properties:
+        aps-environment: development
     scheme:
       environmentVariables:
         RUST_BACKTRACE: full
