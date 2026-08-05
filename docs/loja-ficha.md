@@ -84,9 +84,22 @@ duas atenções:
   (SERVER_HOSTS exatos, sem curinga; link externo abre no Safari FORA do app).
 - **Gambling/Contests: NO.**
 
-Resultado esperado: **4+**. Nota: se o revisor questionar conteúdo gerado por
-IA, o argumento é que o acesso é por conta corporativa provisionada pela
-organização (não é um chatbot aberto ao público) e há filtros no servidor.
+Resultado esperado: **4+**. Se o revisor questionar conteúdo gerado por IA, o
+argumento verdadeiro é o do **acesso**: conta corporativa provisionada pela
+organização, sem cadastro público, com modelos definidos pelo administrador —
+não é um chatbot aberto. **Não alegue "filtros de conteúdo"**: o que existe é
+mascaramento de PII (`maskOutboundPii`) e o modo `lgpd_strict`, que são outra
+coisa. Afirmação que não se sustenta numa segunda pergunta custa mais que a
+dúvida original.
+
+> ⚠️ **Persona Shana fora do catálogo de produção (decisão 05/08).** A Shana
+> (persona pessoal, sarcástica, com palavrão — `SHVIA-OLLAMA/modelfiles/shana/`)
+> **não pode estar no catálogo que o app oferece** enquanto o app for 4+: ela
+> sozinha levaria "Linguagem obscena: Frequente" → 17+ e acionaria a régua de
+> moderação de UGC da Apple. O snapshot do servidor GPU de 30/07 lista apenas
+> `ShvIA:latest` — confirmar com `ollama list` em produção antes de responder
+> "Nenhum". Se um dia ela entrar no produto, a classificação etária tem de ser
+> refeita (é mudança de formulário, não exige build novo).
 
 ## 7. App Review Information (o campo que mais derruba submissão)
 
