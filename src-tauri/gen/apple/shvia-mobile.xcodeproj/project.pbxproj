@@ -153,14 +153,14 @@
 			path = Externals;
 			sourceTree = "<group>";
 		};
-		"TEMP_36BA3F0A-1AB4-484A-B09C-C0F614A762AD" /* x86_64 */ = {
+		"TEMP_B9DD4245-D5F1-4251-A396-1EF7CE1C98BF" /* x86_64 */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = x86_64;
 			sourceTree = "<group>";
 		};
-		"TEMP_AC967E74-4225-4A44-A304-91FD2C1AFADA" /* arm64 */ = {
+		"TEMP_E3F82205-6B2A-4DD4-9661-3EA13EF86622" /* arm64 */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -363,7 +363,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = cloud.blue3.shvia;
 				PRODUCT_NAME = "ShvIA";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
 			};
 			name = release;
@@ -395,7 +395,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = cloud.blue3.shvia;
 				PRODUCT_NAME = "ShvIA";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
 			};
 			name = debug;
