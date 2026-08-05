@@ -54,17 +54,12 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        UISupportedInterfaceOrientations~ipad:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
         # Congelados no `tauri ios init` de 14/07 (app estava em 0.2.6); atualizados
         # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
         # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
         # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
-        CFBundleShortVersionString: 0.6.2
-        CFBundleVersion: "0.6.2"
+        CFBundleShortVersionString: 0.6.5
+        CFBundleVersion: "0.6.5"
     # ATENÇÃO: o XcodeGen GERA o arquivo .entitlements a partir daqui a cada
     # regeneração — edição manual no arquivo morre no próximo generate (foi o
     # que apagou o aps-environment em 04/08). A fonte da verdade é ESTE bloco.
@@ -79,6 +74,7 @@ targets:
         RUST_LOG: info
     settings:
       base:
+        TARGETED_DEVICE_FAMILY: "1"
         ENABLE_BITCODE: false
         ARCHS: [arm64]
         VALID_ARCHS: arm64 
