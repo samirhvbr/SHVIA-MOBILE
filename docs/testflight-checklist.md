@@ -47,7 +47,16 @@ incluindo o 1024) ✓ · Team ID, bundle, `minimumSystemVersion` e categoria ✓
       em `routes/console.php`. A tensão com o ADR-001 do site ("nada de Blue3 na
       landing") foi resolvida pelo **ADR-014** de lá: a exceção vale só para o
       parágrafo de identificação legal.
-      - [ ] ⚠️ **Confirmar que o scheduler roda em produção.** A política promete
+      - [x] 🟢 **Scheduler VERIFICADO em produção (05/08).** `/etc/cron.d/shvia`
+            instalado (14/07, usuário `www-data` — NÃO é crontab do root, foi
+            falso alarme meu procurar lá), `shvia-queue.service` ativo e
+            processando jobs (`ConsolidateConversationMemory` DONE em ~50ms), e
+            o `schedule:list` com os 15 comandos — inclusive `logs:prune
+            --days=180`, `inference:prune` e `errors:prune`, que são o expurgo
+            que a política publicada promete. O log parado desde 22/07 era o
+            FIM dos avisos de `srv4`, não o scheduler morrendo: em produção só
+            warning/erro é registrado.
+      - [ ] ~~Confirmar que o scheduler roda em produção.~~ A política promete
             expurgo em 180 dias e os comandos estão agendados, mas o
             `docs/PUSH/PUSH-APNS-20260716.md` registra o cron/queue como
             "pendente de ativação em prod". Retenção documentada que não executa
