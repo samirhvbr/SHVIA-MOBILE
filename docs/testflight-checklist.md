@@ -9,6 +9,37 @@
 
 ---
 
+## §3 — Rejeição de 12/08/2026 e o reenvio (submissão e0dccd27)
+
+Revisada em **iPad Air 11" (M3), iPadOS 26.6**, build **0.6.5** (iPhone-only).
+Dois apontamentos, os dois **corrigidos server-side** — e é a lição que mais
+economiza tempo aqui: num shell fino, **rejeição de conteúdo/UI não exige build
+novo**. O binário 0.6.5 segue válido no ASC; o reenvio é deploy + resposta.
+
+| Diretriz | O que era | Correção |
+|---|---|---|
+| **2.1(a)** microfone sem reação | Falsa detecção: em WKWebView o `webkitSpeechRecognition` EXISTE mas não funciona (privilégio do Safari) → botão visível e mudo | web **2.100.2**: Plano A descartado em iOS-sem-`Safari/`; cão de guarda de 2,5 s cobre WebView desconhecida |
+| **5.1.1(v)** sem exclusão de conta | `ProfileController::destroy` existia, mas só alcançável pela navegação do Breeze — que o dashboard não usa | web **2.100.2**: seção na aba Conta + `DELETE /api/v1/me/account` + `AccountDeletionService`. Ver `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md` |
+
+**Decisão confirmada em 14/08: seguir iPhone-only.** A Apple revisou num iPad, e
+o retrato de iPad é o ponto fraco conhecido do layout (cai na gaveta dos 1080px
+do CSS). iPhone-only tira o tablet da avaliação e casa com o binário já enviado.
+O repo voltou a `TARGETED_DEVICE_FAMILY: "1"` na 0.6.8 para que o PRÓXIMO build
+não saia universal por acidente — divergir do que está publicado é como se
+perde um ciclo de review.
+
+### Reenvio — ordem
+1. **Deploy do SHVIA-WEB ≥ 2.100.2** (sem isso nada muda no app).
+2. Testar no aparelho: microfone **sumiu** do composer; exclusão visível no fim
+   da aba Conta e funcionando (usar conta descartável — apaga de verdade).
+3. **Gravar vídeo** no aparelho físico: login com a conta demo → navegar até a
+   exclusão → fluxo completo até a confirmação. A Apple pede explicitamente, e
+   pede que fique nas *Notes* do App Review Information.
+4. Responder no **Resolution Center** apontando as duas correções.
+5. **Submit for Review** com o MESMO build 0.6.5.
+
+---
+
 ## §0 — Runbook do dia da publicação (revisão de 30/07)
 
 > Ordem de execução, do que **trava o upload** pro que só melhora a chance de

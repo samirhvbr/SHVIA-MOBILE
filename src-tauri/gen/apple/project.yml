@@ -54,17 +54,12 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        UISupportedInterfaceOrientations~ipad:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
         # Congelados no `tauri ios init` de 14/07 (app estava em 0.2.6); atualizados
         # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
         # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
         # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
-        CFBundleShortVersionString: 0.6.6
-        CFBundleVersion: "0.6.6"
+        CFBundleShortVersionString: 0.6.8
+        CFBundleVersion: "0.6.8"
     # ATENÇÃO: o XcodeGen GERA o arquivo .entitlements a partir daqui a cada
     # regeneração — edição manual no arquivo morre no próximo generate (foi o
     # que apagou o aps-environment em 04/08). A fonte da verdade é ESTE bloco.
@@ -79,6 +74,13 @@ targets:
         RUST_LOG: info
     settings:
       base:
+        # iPhone-only (decisão confirmada 14/08, após a rejeição): a Apple
+        # revisou em iPad Air e o retrato de iPad é o ponto fraco conhecido do
+        # layout (cai na gaveta dos 1080px). Publicar iPhone-only tira o tablet
+        # da avaliação e casa com o binário 0.6.5 já no App Store Connect — o
+        # reenvio NÃO precisa de build novo, porque as duas correções são
+        # server-side. Reativar iPad = tirar esta linha + capturas em paisagem.
+        TARGETED_DEVICE_FAMILY: "1"
         ENABLE_BITCODE: false
         ARCHS: [arm64]
         VALID_ARCHS: arm64 
