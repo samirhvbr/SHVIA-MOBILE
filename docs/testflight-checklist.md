@@ -19,7 +19,7 @@ novo**. O binário 0.6.5 segue válido no ASC; o reenvio é deploy + resposta.
 | Diretriz | O que era | Correção |
 |---|---|---|
 | **2.1(a)** microfone sem reação | Falsa detecção: em WKWebView o `webkitSpeechRecognition` EXISTE mas não funciona (privilégio do Safari) → botão visível e mudo | web **2.100.2**: Plano A descartado em iOS-sem-`Safari/`; cão de guarda de 2,5 s cobre WebView desconhecida |
-| **5.1.1(v)** sem exclusão de conta | `ProfileController::destroy` existia, mas só alcançável pela navegação do Breeze — que o dashboard não usa | web **2.100.2**: seção na aba Conta + `DELETE /api/v1/me/account` + `AccountDeletionService`. Ver `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md` |
+| **5.1.1(v)** sem exclusão de conta | `ProfileController::destroy` existia, mas só alcançável pela navegação do Breeze — que o dashboard não usa | web **2.100.2**: seção + `DELETE /api/v1/me/account` + `AccountDeletionService`; desde 18/08/2026 a seção fica na aba **Perfil** (era "Chave API", apesar de a doc dizer "Conta"). Ver `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md` |
 
 **Decisão confirmada em 14/08: seguir iPhone-only.** A Apple revisou num iPad, e
 o retrato de iPad é o ponto fraco conhecido do layout (cai na gaveta dos 1080px
@@ -31,7 +31,8 @@ perde um ciclo de review.
 ### Reenvio — ordem
 1. **Deploy do SHVIA-WEB ≥ 2.100.2** (sem isso nada muda no app).
 2. Testar no aparelho: microfone **sumiu** do composer; exclusão visível no fim
-   da aba Conta e funcionando (usar conta descartável — apaga de verdade).
+   da aba **Perfil** (mudou de lugar em 18/08/2026 — ver nota na tabela acima) e
+   funcionando (usar conta descartável — apaga de verdade).
 3. **Gravar vídeo** no aparelho físico: login com a conta demo → navegar até a
    exclusão → fluxo completo até a confirmação. A Apple pede explicitamente, e
    pede que fique nas *Notes* do App Review Information.
