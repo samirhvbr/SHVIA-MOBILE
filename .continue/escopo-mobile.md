@@ -197,6 +197,31 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
+### 🔴 Retrato de 22/08/2026 — o reenvio está parado há 10 dias, e é o único item
+
+**Onde está:** a submissão foi **rejeitada em 12/08** por dois motivos
+(2.1(a) microfone morto e 5.1.1(v) exclusão de conta inalcançável). **As duas
+causas foram corrigidas e estão em produção** desde a web `2.100.2` — hoje a web
+está na 2.108.x, muito além. O binário **0.6.5 segue válido no ASC**: o reenvio é
+resposta + submit, **não precisa de build novo**.
+
+**O que falta é tudo do lado do Samir** (ordem em
+[`docs/testflight-checklist.md` §3](../docs/testflight-checklist.md)):
+
+1. testar no aparelho: o microfone **sumiu** do composer, e a exclusão de conta
+   está visível e funcionando — ⚠️ ela **mudou de lugar em 18/08**: agora fica no
+   fim da aba **Perfil** (era "Chave API"). Usar conta descartável: apaga de verdade;
+2. **gravar o vídeo** do fluxo de exclusão em aparelho físico, no caminho ATUAL —
+   a Apple pede explicitamente e pede que fique nas *Notes* do App Review;
+3. responder no **Resolution Center** apontando as duas correções;
+4. **Submit for Review** com o MESMO build 0.6.5.
+
+**Não fazer:** subir build novo "para garantir". O 0.6.5 é iPhone-only e é o que
+foi revisado; divergir do que está publicado custa um ciclo inteiro de review.
+
+**Conta de demonstração** `apple-review@shvia.org` precisa continuar viva e com
+senha válida até a aprovação.
+
 ### 🚀 Revisão de 30/07 — véspera da publicação
 
 Revisão pedida pelo Samir com o alvo "publicar amanhã". **Verde no host** (rodado
