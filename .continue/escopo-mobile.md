@@ -197,30 +197,40 @@ Pré-requisito de qualidade p/ submeter.
 
 ## 5. Estado
 
-### 🔴 Retrato de 22/08/2026 — o reenvio está parado há 10 dias, e é o único item
+### 🔴 Retrato de 29/08/2026 — o reenvio está parado há 17 dias, e é o único item
 
 **Onde está:** a submissão foi **rejeitada em 12/08** por dois motivos
 (2.1(a) microfone morto e 5.1.1(v) exclusão de conta inalcançável). **As duas
-causas foram corrigidas e estão em produção** desde a web `2.100.2` — hoje a web
-está na 2.108.x, muito além. O binário **0.6.5 segue válido no ASC**: o reenvio é
-resposta + submit, **não precisa de build novo**.
+causas estão CORRIGIDAS E NO AR** — conferido em 29/08 por md5: o
+`ai.shvia.org/js/app.js` de produção é byte-a-byte igual ao do master local
+(web 2.110.9x), com o guarda `iOSWebView` do microfone e o
+`DELETE /api/v1/me/account` da exclusão. As páginas `shvia.org/privacidade.html`
+e `/suporte.html` respondem 200 com CNPJ preenchido. O binário **0.6.5 segue
+válido no ASC**: o reenvio é resposta + submit, **não precisa de build novo**.
+
+**⚠️ Achado de 29/08 que muda a instrução do vídeo: a exclusão de conta mudou de
+endereço de novo.** O retrato de 22/08 mandava gravar "o fim da aba Perfil"; o
+redesign A6 (web 22/08) tirou de lá e deu painel próprio. Terceiro endereço em
+duas semanas — gravar o caminho errado é queimar mais um ciclo de review.
+**Caminho de hoje:** Configurações → grupo *Sistema* → **Conta & zona de risco**
+→ *Quero excluir minha conta* → senha → *Excluir definitivamente*
+(`#pane-conta` no `dashboard.blade.php` do SHVIA-WEB).
 
 **O que falta é tudo do lado do Samir** (ordem em
-[`docs/testflight-checklist.md` §3](../docs/testflight-checklist.md)):
+[`docs/testflight-checklist.md` §3](../docs/testflight-checklist.md), que agora
+traz os textos do Resolution Center e das Notes prontos para colar):
 
-1. testar no aparelho: o microfone **sumiu** do composer, e a exclusão de conta
-   está visível e funcionando — ⚠️ ela **mudou de lugar em 18/08**: agora fica no
-   fim da aba **Perfil** (era "Chave API"). Usar conta descartável: apaga de verdade;
+1. testar no aparelho: o microfone **sumiu** do composer, e a exclusão está
+   alcançável e funcionando no caminho acima. Usar conta descartável: apaga de verdade;
 2. **gravar o vídeo** do fluxo de exclusão em aparelho físico, no caminho ATUAL —
    a Apple pede explicitamente e pede que fique nas *Notes* do App Review;
-3. responder no **Resolution Center** apontando as duas correções;
-4. **Submit for Review** com o MESMO build 0.6.5.
+3. responder no **Resolution Center** apontando as duas correções (texto pronto);
+4. conferir que a conta demo `apple-review@shvia.org` está viva e com a senha
+   que está no ASC;
+5. **Submit for Review** com o MESMO build 0.6.5.
 
 **Não fazer:** subir build novo "para garantir". O 0.6.5 é iPhone-only e é o que
 foi revisado; divergir do que está publicado custa um ciclo inteiro de review.
-
-**Conta de demonstração** `apple-review@shvia.org` precisa continuar viva e com
-senha válida até a aprovação.
 
 ### 🚀 Revisão de 30/07 — véspera da publicação
 
