@@ -45,13 +45,19 @@ ASC caiu). O passo 1 da ordem abaixo, portanto, **já está feito**.
    avatar/menu → **Configurações** → grupo *Sistema* → **Conta & zona de risco**
    → *Quero excluir minha conta* → confirmar com a senha → *Excluir definitivamente*.
    NÃO é mais o fim da aba Perfil (mudou em 22/08 — ver a nota na tabela acima).
-3. [ ] **Gravar vídeo** no aparelho físico, no caminho ATUAL: login com a conta demo
-   → navegar até a exclusão → fluxo completo até a confirmação. A Apple pede
-   explicitamente, e pede que fique nas *Notes* do App Review Information.
+3. [ ] **Gravar vídeo** no aparelho físico, no caminho ATUAL: login → navegar até a
+   exclusão → fluxo completo até a confirmação. A Apple pede explicitamente, e pede
+   que fique nas *Notes* do App Review Information.
+   ⚠️ **NÃO gravar logado como `apple@shvia.org`.** O fluxo apaga de verdade e no
+   fim da gravação a conta que o revisor vai usar não existe mais. Gravar com uma
+   conta descartável, criada só para isso.
 4. [ ] Responder no **Resolution Center** apontando as duas correções (texto pronto
    para colar abaixo).
-5. [ ] Conferir que **`apple-review@shvia.org` continua viva e com a senha do ASC**
-   antes de submeter — revisor que não entra reprova por 2.1 de novo.
+5. [ ] Conferir que **`apple@shvia.org` ("Apple Corp", criada em 05/08/2026) continua
+   viva e com a senha que está no ASC** antes de submeter — revisor que não entra
+   reprova por 2.1 de novo. **Conferido pelo Samir em 29/08: OK.**
+   Consequência aceita: se o revisor testar a exclusão, ele apaga essa conta. Num
+   segundo ciclo de review ela precisa ser **recriada** com a mesma senha do ASC.
 6. [ ] **Submit for Review** com o MESMO build 0.6.5. **Não subir build novo.**
 
 ### Texto pronto — Resolution Center
@@ -86,7 +92,7 @@ deletion of the account and its content (conversations, files, projects, memorie
 and provider keys), not a deactivation. A demonstration video of the full flow,
 recorded on a physical iPhone, is attached in App Review Information notes.
 
-Demo account: apple-review@shvia.org (password in App Review Information).
+Demo account: apple@shvia.org (password in App Review Information).
 
 We are resubmitting the same build, 0.6.5, for review.
 

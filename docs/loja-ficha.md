@@ -104,9 +104,10 @@ dúvida original.
 ## 7. App Review Information (o campo que mais derruba submissão)
 
 - **Sign-in required: YES** → fornecer conta demo:
-  - Username: `apple-review@shvia.org` *(criar no ShvIA antes do Submit —
-    perfil comum, sem admin, com acesso a chat + um projeto de exemplo com
-    2-3 documentos na base de conhecimento, para a review ver o produto real)*
+  - Username: `apple@shvia.org` — conta **"Apple Corp"**, criada em 05/08/2026,
+    conferida viva em 29/08. *(Perfil comum, sem admin. Se o revisor exercitar a
+    exclusão de conta — que é justamente o que a rejeição de 12/08 pede para
+    demonstrar — a conta some: recriar antes de qualquer novo Submit.)*
   - Password: *(gerar forte e colar no ASC)*
 - **Notes (sugestão, em inglês):**
 
@@ -146,7 +147,7 @@ only — general web browsing is not possible.
 ## 10. Checklist final pré-Submit
 
 - [ ] Build 0.6.1 selecionado na versão
-- [ ] Conta `apple-review@` criada e testada (login + chat + KB funcionando)
+- [x] Conta `apple@shvia.org` criada (05/08/2026) e conferida viva em 29/08
 - [ ] SHVIA-WEB ≥ 2.91.7 em produção (front do push)
 - [ ] Smoke on-device verde (Face ID card, permissão, push:test, tap)
 - [ ] Screenshots subidos (6.9" + iPad se mantido)

@@ -225,8 +225,9 @@ traz os textos do Resolution Center e das Notes prontos para colar):
 2. **gravar o vídeo** do fluxo de exclusão em aparelho físico, no caminho ATUAL —
    a Apple pede explicitamente e pede que fique nas *Notes* do App Review;
 3. responder no **Resolution Center** apontando as duas correções (texto pronto);
-4. conferir que a conta demo `apple-review@shvia.org` está viva e com a senha
-   que está no ASC;
+4. ~~conferir a conta demo~~ — **feita em 29/08:** é `apple@shvia.org`
+   ("Apple Corp", 05/08/2026), viva e com a senha do ASC. O endereço
+   `apple-review@shvia.org` que a doc dizia **nunca existiu**;
 5. **Submit for Review** com o MESMO build 0.6.5.
 
 **Não fazer:** subir build novo "para garantir". O 0.6.5 é iPhone-only e é o que
