@@ -1,7 +1,10 @@
 # Opt-in do COMMITTER neste repositório (ADR-004 do skill-COMMITTER).
 # A presença deste arquivo é o opt-in; as chaves só RESTRINGEM (SPEC.md §2).
 # Varredura: ~/x/GIT/run.sh (cron de 30 min) descobre quem tem este marcador.
-enabled: true
+# 29/08/2026 — kill-switch LIGADO enquanto o reenvio da Apple corre com um agente
+# em paralelo: o que sair daqui vai por PR, e commit automático no master criaria
+# divergência entre o Mac e a máquina do cron. Reverter é trocar para `true`.
+enabled: false
 push: true
 branch_only: master
 fallback: sonnet
