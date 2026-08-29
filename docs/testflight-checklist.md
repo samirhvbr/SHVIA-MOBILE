@@ -74,6 +74,11 @@ ASC caiu). O passo 1 da ordem abaixo, portanto, **já está feito**.
 
 > Copiar como está. É resposta a **dois** apontamentos, então vai em dois blocos;
 > a Apple responde melhor a "o que estava errado → o que mudou → como verificar".
+>
+> **Não prometer contagem de toques.** A primeira versão dizia "in three taps" e o
+> caminho tem cinco mais a digitação da senha — revisor que conta encontra a
+> resposta mentindo na primeira linha, justamente sobre o item que ele reprovou.
+> Descrever o caminho basta.
 
 ```text
 Hello,
@@ -94,8 +99,8 @@ recognize.
 
 Guideline 5.1.1(v) - Data Collection and Storage (account deletion)
 
-Account deletion is now reachable from inside the app, in three taps from the main
-screen: Settings -> System -> "Conta & zona de risco" (Account & danger zone) ->
+Account deletion is now reachable from inside the app, from the main screen:
+Settings -> System -> "Conta & zona de risco" (Account & danger zone) ->
 "Quero excluir minha conta" (Delete my account) -> confirm with the account
 password -> "Excluir definitivamente" (Delete permanently). It performs a real
 deletion of the account and its content (conversations, files, projects, memories
