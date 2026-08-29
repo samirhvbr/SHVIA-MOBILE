@@ -40,14 +40,24 @@ ASC caiu). O passo 1 da ordem abaixo, portanto, **já está feito**.
 
 ### Reenvio — ordem
 1. [x] ~~**Deploy do SHVIA-WEB ≥ 2.100.2**~~ — conferido em 29/08 (acima).
-2. [ ] Testar no aparelho: microfone **sumiu** do composer; exclusão alcançável e
-   funcionando (usar conta descartável — apaga de verdade). **Caminho ATUAL:**
+2. [x] ~~Testar no aparelho~~ — **feito pelo Samir em 29/08**: microfone sumiu do
+   composer e a exclusão apagou a conta de verdade. Build conferido no iPhone por
+   `devicectl`: `cloud.blue3.shvia` **0.6.5**, o mesmo que está em review.
+   **Caminho ATUAL:**
    avatar/menu → **Configurações** → grupo *Sistema* → **Conta & zona de risco**
    → *Quero excluir minha conta* → confirmar com a senha → *Excluir definitivamente*.
    NÃO é mais o fim da aba Perfil (mudou em 22/08 — ver a nota na tabela acima).
 3. [ ] **Gravar vídeo** no aparelho físico, no caminho ATUAL: login → navegar até a
-   exclusão → fluxo completo até a confirmação. A Apple pede explicitamente, e pede
-   que fique nas *Notes* do App Review Information.
+   exclusão → fluxo completo até a confirmação. Vai nas *Notes* do App Review
+   Information.
+   ⚠️ **Correção de 29/08 — o "a Apple exige o vídeo" é alegação NOSSA, não citação
+   dela.** A frase se repetia em quatro arquivos (aqui, no roadmap, na ficha e no
+   `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md`) sem que **a mensagem literal da
+   rejeição estivesse guardada em lugar nenhum** — foi paráfrase que endureceu em
+   fato. O que a 5.1.1(v) pede com certeza é **indicar o caminho** até a exclusão;
+   vídeo é reforço barato que costuma evitar uma ida e volta, não requisito provado.
+   **Regra nova: colar a mensagem literal do Resolution Center em `docs/` na
+   PRÓXIMA rejeição.** Sem o original, a doc vira telefone sem fio.
    ⚠️ **NÃO gravar logado como `apple@shvia.org`.** O fluxo apaga de verdade e no
    fim da gravação a conta que o revisor vai usar não existe mais. Gravar com uma
    conta descartável, criada só para isso.

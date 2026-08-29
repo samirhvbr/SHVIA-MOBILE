@@ -220,10 +220,13 @@ duas semanas — gravar o caminho errado é queimar mais um ciclo de review.
 [`docs/testflight-checklist.md` §3](../docs/testflight-checklist.md), que agora
 traz os textos do Resolution Center e das Notes prontos para colar):
 
-1. testar no aparelho: o microfone **sumiu** do composer, e a exclusão está
-   alcançável e funcionando no caminho acima. Usar conta descartável: apaga de verdade;
-2. **gravar o vídeo** do fluxo de exclusão em aparelho físico, no caminho ATUAL —
-   a Apple pede explicitamente e pede que fique nas *Notes* do App Review;
+1. ~~testar no aparelho~~ — **feito em 29/08**: microfone sumiu do composer e a
+   exclusão apagou a conta de verdade; o iPhone tem o **0.6.5**, o build em review;
+2. **gravar o vídeo** do fluxo de exclusão em aparelho físico, no caminho ATUAL.
+   ⚠️ Conferido em 29/08: o "a Apple exige o vídeo" era **paráfrase nossa** repetida
+   em quatro arquivos — a mensagem literal da rejeição não está guardada em lugar
+   nenhum. O exigido é indicar o caminho; o vídeo é reforço barato. Guardar o texto
+   original do Resolution Center em `docs/` na próxima;
 3. responder no **Resolution Center** apontando as duas correções (texto pronto);
 4. ~~conferir a conta demo~~ — **feita em 29/08:** é `apple@shvia.org`
    ("Apple Corp", 05/08/2026), viva e com a senha do ASC. O endereço
