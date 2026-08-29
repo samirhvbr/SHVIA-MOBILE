@@ -19,7 +19,7 @@ novo**. O binário 0.6.5 segue válido no ASC; o reenvio é deploy + resposta.
 | Diretriz | O que era | Correção |
 |---|---|---|
 | **2.1(a)** microfone sem reação | Falsa detecção: em WKWebView o `webkitSpeechRecognition` EXISTE mas não funciona (privilégio do Safari) → botão visível e mudo | web **2.100.2**: Plano A descartado em iOS-sem-`Safari/`; cão de guarda de 2,5 s cobre WebView desconhecida |
-| **5.1.1(v)** sem exclusão de conta | `ProfileController::destroy` existia, mas só alcançável pela navegação do Breeze — que o dashboard não usa | web **2.100.2**: seção + `DELETE /api/v1/me/account` + `AccountDeletionService`; desde 18/08/2026 a seção fica na aba **Perfil** (era "Chave API", apesar de a doc dizer "Conta"). Ver `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md` |
+| **5.1.1(v)** sem exclusão de conta | `ProfileController::destroy` existia, mas só alcançável pela navegação do Breeze — que o dashboard não usa | web **2.100.2**: seção + `DELETE /api/v1/me/account` + `AccountDeletionService`. ⚠️ **A seção já mudou de endereço TRÊS vezes** — nasceu na aba "Chave API", foi ao fim de "Perfil" em 18/08 e no redesign A6 (22/08) ganhou painel próprio, **Conta & zona de risco**, sob o grupo *Sistema*. É onde está hoje (`#pane-conta` do `dashboard.blade.php`). Ver `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md` |
 
 **Decisão confirmada em 14/08: seguir iPhone-only.** A Apple revisou num iPad, e
 o retrato de iPad é o ponto fraco conhecido do layout (cai na gaveta dos 1080px
@@ -28,16 +28,111 @@ O repo voltou a `TARGETED_DEVICE_FAMILY: "1"` na 0.6.8 para que o PRÓXIMO build
 não saia universal por acidente — divergir do que está publicado é como se
 perde um ciclo de review.
 
+### Produção conferida em 29/08/2026 — as duas correções estão NO AR
+
+Verificado do Mac, sem depender de versão declarada: o `https://ai.shvia.org/js/app.js`
+servido em produção tem **md5 idêntico** ao `public/js/app.js` do master local
+(`19bb4eaa549579077e15cba02f0e9834`, web 2.110.9x) — ou seja, produção roda o
+código atual, e nele estão o guarda `iOSWebView`/`webSpeechUsavel` do microfone e o
+`DELETE /api/v1/me/account` da exclusão. As páginas `shvia.org/privacidade.html` e
+`shvia.org/suporte.html` respondem **200** com o CNPJ preenchido (o bloqueio duro do
+ASC caiu). O passo 1 da ordem abaixo, portanto, **já está feito**.
+
 ### Reenvio — ordem
-1. **Deploy do SHVIA-WEB ≥ 2.100.2** (sem isso nada muda no app).
-2. Testar no aparelho: microfone **sumiu** do composer; exclusão visível no fim
-   da aba **Perfil** (mudou de lugar em 18/08/2026 — ver nota na tabela acima) e
-   funcionando (usar conta descartável — apaga de verdade).
-3. **Gravar vídeo** no aparelho físico: login com a conta demo → navegar até a
-   exclusão → fluxo completo até a confirmação. A Apple pede explicitamente, e
-   pede que fique nas *Notes* do App Review Information.
-4. Responder no **Resolution Center** apontando as duas correções.
-5. **Submit for Review** com o MESMO build 0.6.5.
+1. [x] ~~**Deploy do SHVIA-WEB ≥ 2.100.2**~~ — conferido em 29/08 (acima).
+2. [x] ~~Testar no aparelho~~ — **feito pelo Samir em 29/08**: microfone sumiu do
+   composer e a exclusão apagou a conta de verdade. Build conferido no iPhone por
+   `devicectl`: `cloud.blue3.shvia` **0.6.5**, o mesmo que está em review.
+   **Caminho ATUAL:**
+   avatar/menu → **Configurações** → grupo *Sistema* → **Conta & zona de risco**
+   → *Quero excluir minha conta* → confirmar com a senha → *Excluir definitivamente*.
+   NÃO é mais o fim da aba Perfil (mudou em 22/08 — ver a nota na tabela acima).
+3. [ ] **Gravar vídeo** no aparelho físico, no caminho ATUAL: login → navegar até a
+   exclusão → fluxo completo até a confirmação. Vai nas *Notes* do App Review
+   Information.
+   ⚠️ **Correção de 29/08 — o "a Apple exige o vídeo" é alegação NOSSA, não citação
+   dela.** A frase se repetia em quatro arquivos (aqui, no roadmap, na ficha e no
+   `SHVIA-WEB/docs/CONTA/EXCLUSAO-DE-CONTA.md`) sem que **a mensagem literal da
+   rejeição estivesse guardada em lugar nenhum** — foi paráfrase que endureceu em
+   fato. O que a 5.1.1(v) pede com certeza é **indicar o caminho** até a exclusão;
+   vídeo é reforço barato que costuma evitar uma ida e volta, não requisito provado.
+   **Regra nova: colar a mensagem literal do Resolution Center em `docs/` na
+   PRÓXIMA rejeição.** Sem o original, a doc vira telefone sem fio.
+   ⚠️ **NÃO gravar logado como `apple@shvia.org`.** O fluxo apaga de verdade e no
+   fim da gravação a conta que o revisor vai usar não existe mais. Gravar com uma
+   conta descartável, criada só para isso.
+4. [ ] Responder no **Resolution Center** apontando as duas correções (texto pronto
+   para colar abaixo).
+5. [ ] Conferir que **`apple@shvia.org` ("Apple Corp", criada em 05/08/2026) continua
+   viva e com a senha que está no ASC** antes de submeter — revisor que não entra
+   reprova por 2.1 de novo. **Conferido pelo Samir em 29/08: OK.**
+   Consequência aceita: se o revisor testar a exclusão, ele apaga essa conta. Num
+   segundo ciclo de review ela precisa ser **recriada** com a mesma senha do ASC.
+6. [ ] **Submit for Review** com o MESMO build 0.6.5. **Não subir build novo.**
+
+### Texto pronto — Resolution Center
+
+> Copiar como está. É resposta a **dois** apontamentos, então vai em dois blocos;
+> a Apple responde melhor a "o que estava errado → o que mudou → como verificar".
+>
+> **Não prometer contagem de toques.** A primeira versão dizia "in three taps" e o
+> caminho tem cinco mais a digitação da senha — revisor que conta encontra a
+> resposta mentindo na primeira linha, justamente sobre o item que ele reprovou.
+> Descrever o caminho basta.
+
+```text
+Hello,
+
+Thank you for the detailed review. Both issues have been fixed on the server side.
+Because ShvIA is a thin client that loads our web application, these fixes are
+already live for the build under review (0.6.5) - no new binary is required.
+
+Guideline 2.1 - Performance - App Completeness (microphone button did nothing)
+
+You were right: the button was visible but inert. Our web client detected speech
+support via `webkitSpeechRecognition`, which IS exposed inside WKWebView but is a
+Safari-only privilege - calling start() produced no result and no error. We now
+detect the embedded WebView (iOS user agent without the "Safari/" token) and, when
+speech recognition cannot work, the microphone control is hidden entirely rather
+than shown as a dead control. A 2.5-second watchdog covers any WebView we do not
+recognize.
+
+Guideline 5.1.1(v) - Data Collection and Storage (account deletion)
+
+Account deletion is now reachable from inside the app, from the main screen:
+Settings -> System -> "Conta & zona de risco" (Account & danger zone) ->
+"Quero excluir minha conta" (Delete my account) -> confirm with the account
+password -> "Excluir definitivamente" (Delete permanently). It performs a real
+deletion of the account and its content (conversations, files, projects, memories
+and provider keys), not a deactivation. A demonstration video of the full flow,
+recorded on a physical iPhone, is attached in App Review Information notes.
+
+Demo account: apple@shvia.org (password in App Review Information).
+
+We are resubmitting the same build, 0.6.5, for review.
+
+Thank you,
+ShvIA team
+```
+
+### Texto pronto — App Review Information ▸ Notes
+
+```text
+ShvIA is a thin native client for our web application (ai.shvia.org). Sign in with
+the demo account provided above.
+
+Account deletion (Guideline 5.1.1(v)): Settings -> System -> "Conta & zona de
+risco" -> "Quero excluir minha conta" -> confirm with the account password ->
+"Excluir definitivamente". This permanently deletes the account. A screen recording
+of this exact flow on a physical iPhone is attached.
+
+Microphone (Guideline 2.1): speech input is not offered inside the app's WebView,
+so the microphone control is hidden. The camera/microphone usage descriptions
+remain in the bundle for attachments.
+
+This submission reuses build 0.6.5, unchanged. Both issues from the 12 Aug 2026
+review were fixed server-side and are live in production.
+```
 
 ---
 
