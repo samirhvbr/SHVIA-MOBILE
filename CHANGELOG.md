@@ -4,6 +4,27 @@ Entries follow the commit-message format (`version - comment`), newest first —
 convention as the sibling repositories. This file did not exist until 0.6.16; earlier
 history lives in the git log.
 
+## 0.6.20 - COMMIT-RULE replaces the COMMITTER delegation: the agent commits again
+
+The `PS — Commits: a skill COMMITTER cuida disso` block in this repository's
+agent instructions said that committing and pushing were not the agent's job,
+because a cron cycle would package the commit from the changelog entry. That
+skill was switched off across the fleet on 03/09/2026 — `.committer.yml` here is
+`enabled: false` and nothing reads it any more. Switching off the automation did
+not unwrite the delegation, so the instruction stayed behind pointing at a cycle
+that no longer runs: an agent reading it stops at a dirty working tree that
+nothing is watching.
+
+Replaced by the `COMMIT-RULE` echo block, whose single source is
+[samirhvbr/repodocs `docs/versioning.md`](https://github.com/samirhvbr/repodocs/blob/master/docs/versioning.md#who-commits-and-when)
+(ADR-016 there). It says the opposite and says it in one place for the whole
+fleet: the agent commits, nothing is reported as finished until it is committed,
+one subject per commit, and a large delivery is split into blocks grouped by
+subject. Being a delimited block rather than per-repo prose is the point — the
+COMMITTER rollout put bespoke wording into 42 files and left no mechanical way
+to find and replace it when the decision behind it was reversed.
+
+
 ## 0.6.19 - clippy was red where CI never looked, and four guards become tests
 
 `mod tests` sat in the middle of `src-tauri/src/lib.rs` with `run()` declared below it.
