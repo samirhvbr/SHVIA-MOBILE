@@ -1,0 +1,77 @@
+# CI do SHVIA-MOBILE — achados G-24 (nenhum CI) e DEP-3/F-31 (advisories não medidos).
+#
+# ## O que ele cobre, e por que só isso
+#
+# Compilar para Android/iOS em CI é caro e exige SDK, keystore e provisioning — decisão de
+# infraestrutura à parte. O que este workflow faz é o barato que ninguém estava fazendo:
+#
+#  · `cargo deny check advisories` — o `src-tauri/deny.toml` deste repo carrega DEZESSEIS
+#    exceções documentadas (a árvore GTK3 do Tauri, sem upgrade seguro) e uma real que não
+#    se fecha aqui (`quick-xml`, preso pelo `plist` do Tauri). Sem esta porta, a próxima
+#    advertência entra sem ninguém ver — foi exatamente assim que o `time = "=0.3.41"`
+#    ficou com a RUSTSEC-2026-0009;
+#  · `cargo test` + `cargo clippy -D warnings` e `cargo check` do `src-tauri` no alvo
+#    host, que pega erro de compilação sem pagar o
+#    empacotamento móvel;
+#  · `npm run prova:bump` — os portadores de versão, **incluindo os que as lojas leem**
+#    (`gen/apple/project.yml`, `Info.plist`, `tauri.properties`). O achado F-24 mediu esses
+#    três em 0.6.8 e 0.2.2 com o repo em 0.6.15: duas fontes de verdade para o número que a
+#    loja vê.
+#
+# Um CI que roda só o caro não roda.
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  provas:
+    name: Advisories, compilação e versão
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # branch stable em 05/08/2026
+
+      # Dependências de sistema do Tauri no Linux: sem elas o `cargo check` do
+      # `src-tauri` falha por ambiente, não por código.
+      - name: Dependências do Tauri (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Advisories (DEP-3 / F-31)
+        uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
+        with:
+          manifest-path: src-tauri/Cargo.toml
+          command: check advisories
+
+      # `cargo check` sozinho não roda teste nenhum, e este repo TEM testes — inclusive a
+      # régua `agents_e_claude_sao_espelho`, que não vale nada se ninguém a executar. E o
+      # clippy deste repo estava VERMELHO (`items_after_test_module`) desde antes de
+      # 02/09/2026, invisível justamente porque o CI não o chamava. Achados F-09 e F-21.
+      - name: cargo test + clippy
+        working-directory: src-tauri
+        run: |
+          cargo test --locked
+          cargo clippy --all-targets --locked -- -D warnings
+
+      # Inclui a guarda que recusa DIMINUIR o `versionCode` do Android: o Play recusa
+      # build com código menor que o último publicado, e descobrir isso na submissão é o
+      # momento mais caro possível.
+      - name: Portadores de versão (F-24)
+        run: npm run prova:bump

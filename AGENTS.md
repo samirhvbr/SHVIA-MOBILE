@@ -1,8 +1,10 @@
 # ShvIA Mobile — Guia do Agente (AGENTS.md)
 
-> Espelho de [CLAUDE.md](CLAUDE.md) abaixo do H1 — **editar os dois**. Veja também
-> [README.md](README.md), [.continue/escopo-mobile.md](.continue/escopo-mobile.md)
-> (roadmap M0–M5) e [docs/decisoes.md](docs/decisoes.md) (ADRs).
+> **Leia também:** [README.md](README.md) · [.continue/escopo-mobile.md](.continue/escopo-mobile.md)
+> (roadmap M0–M5) · [docs/decisoes.md](docs/decisoes.md) (ADRs).
+>
+> `AGENTS.md` e `CLAUDE.md` são o MESMO texto abaixo do H1 — editou um, edite o outro.
+> O teste `agents_e_claude_sao_espelho` reprova a divergência (achado F-21).
 
 ---
 

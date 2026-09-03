@@ -1,6 +1,6 @@
 [package]
 name = "shvia-mobile"
-version = "0.6.15"
+version = "0.6.19"
 description = "ShvIA Mobile — cliente iOS/Android do ShvIA (shell fino Tauri 2)"
 authors = ["Samir Hanna Verza <samirhv@me.com>"]
 edition = "2021"
@@ -24,7 +24,7 @@ tauri-plugin-opener = "2"
 # Pin de compatibilidade (não usamos `time` diretamente): o WebView (wry → cookie
 # 0.18.1) chama a API antiga de `Parsable::parse`. Fixamos `time` numa versão
 # compatível — herdado do SHVIA-DESKTOP. Remover quando wry/cookie subirem.
-time = "=0.3.41"
+time = "=0.3.47"
 
 # Biometria (Face ID/Touch ID no iOS, BiometricPrompt no Android) — trava LOCAL
 # de acesso à casca (M3, destrava a App Store 4.2). NÃO substitui o cookie de

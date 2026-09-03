@@ -3,7 +3,8 @@
 > **Leia também:** [README.md](README.md) · [.continue/escopo-mobile.md](.continue/escopo-mobile.md)
 > (roadmap M0–M5) · [docs/decisoes.md](docs/decisoes.md) (ADRs).
 >
-> `CLAUDE.md` e `AGENTS.md` são **espelhados** abaixo do H1 — editar os dois.
+> `AGENTS.md` e `CLAUDE.md` são o MESMO texto abaixo do H1 — editou um, edite o outro.
+> O teste `agents_e_claude_sao_espelho` reprova a divergência (achado F-21).
 
 ---
 

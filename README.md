@@ -7,6 +7,14 @@ System WebView). Irmão do `SHVIA-DESKTOP` (desktop) e do `SHVIA` (servidor Lara
 > Antes de mexer: **`git pull`**. Convenções em [CLAUDE.md](CLAUDE.md) ·
 > Roadmap em [.continue/escopo-mobile.md](.continue/escopo-mobile.md) ·
 > Decisões em [docs/decisoes.md](docs/decisoes.md).
+>
+> **Todos os documentos:** [decisoes.md](docs/decisoes.md) (ADRs) ·
+> [testflight-checklist.md](docs/testflight-checklist.md) (ordem de execução da
+> publicação) · [loja-ficha.md](docs/loja-ficha.md) (campos do App Store Connect,
+> prontos para colar) · [smoke-test.md](docs/smoke-test.md) (roteiro manual no
+> aparelho). O `docs/` deste repo é pequeno o bastante para caber aqui — não há
+> `docs/README.md` separado, e o teste `todo_doc_e_alcancavel` reprova documento
+> que fique de fora desta lista.
 
 ## Status
 

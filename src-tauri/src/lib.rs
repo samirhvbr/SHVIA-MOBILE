@@ -132,52 +132,6 @@ fn is_internal(url: &tauri::Url) -> bool {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::is_internal;
-
-    fn internal(url: &str) -> bool {
-        is_internal(&url.parse().expect("url de teste válida"))
-    }
-
-    /// A casca empacotada tem URL diferente por plataforma. Se qualquer uma
-    /// deixar de ser interna, a navegação inicial é bloqueada e o app fica preso
-    /// no splash — sem sintoma em `tauri dev` (que usa devUrl).
-    #[test]
-    fn casca_local_e_interna() {
-        assert!(internal("tauri://localhost/index.html"));
-        assert!(internal("http://tauri.localhost/index.html"));
-        assert!(internal("http://localhost:1420/"));
-    }
-
-    /// Dual-host da migração (26/07): as três faces do servidor entram, e o dia
-    /// em que o legado sair é só tirar a linha dele de SERVER_HOSTS.
-    #[test]
-    fn as_tres_faces_do_servidor_sao_internas() {
-        assert!(internal("https://ai.shvia.org/chat"));
-        assert!(internal("https://ia.shvia.org/chat"));
-        assert!(internal("https://ia.blue3.com.br/chat"));
-        assert!(!internal("http://ai.shvia.org/chat")); // servidor só em https
-    }
-
-    /// Fim do curinga: o ápex shvia.org é a LANDING (outro IP) e subdomínio
-    /// qualquer de blue3.com.br não é o ShvIA. Nada disso carrega dentro do app.
-    ///
-    /// `mem.shvia.org` (ai-memory, mesmo IP do ápex) é o caso REAL, não
-    /// hipotético: subdomínio nosso, legítimo, no ar, servindo wiki escrita por
-    /// agentes. É o que o curinga deixaria entrar sem ninguém decidir nada.
-    #[test]
-    fn outras_origens_sao_externas() {
-        assert!(!internal("https://shvia.org/"));
-        assert!(!internal("https://www.shvia.org/"));
-        assert!(!internal("https://mem.shvia.org/"));
-        assert!(!internal("https://evil.shvia.org/"));
-        assert!(!internal("https://blue3.com.br/"));
-        assert!(!internal("https://evil.blue3.com.br/"));
-        assert!(!internal("https://ai.shvia.org.evil.com/"));
-        assert!(!internal("file:///etc/passwd"));
-    }
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -323,4 +277,234 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("erro ao executar o aplicativo ShvIA Mobile");
+}
+
+// O `mod tests` fica no FIM do arquivo, e não no meio: o lint
+// `clippy::items_after_test_module` reprova qualquer item declarado depois dele, e o
+// `run()` estava logo abaixo — `cargo clippy -- -D warnings` deste repo já vinha
+// VERMELHO antes de 02/09/2026, sem ninguém ver, porque o CI daqui não roda clippy.
+// Mesma família do achado F-20 (que mediu só o DESKTOP).
+#[cfg(test)]
+mod tests {
+    use super::is_internal;
+
+    fn internal(url: &str) -> bool {
+        is_internal(&url.parse().expect("url de teste válida"))
+    }
+
+    /// A casca empacotada tem URL diferente por plataforma. Se qualquer uma
+    /// deixar de ser interna, a navegação inicial é bloqueada e o app fica preso
+    /// no splash — sem sintoma em `tauri dev` (que usa devUrl).
+    #[test]
+    fn casca_local_e_interna() {
+        assert!(internal("tauri://localhost/index.html"));
+        assert!(internal("http://tauri.localhost/index.html"));
+        assert!(internal("http://localhost:1420/"));
+    }
+
+    /// Dual-host da migração (26/07): as três faces do servidor entram, e o dia
+    /// em que o legado sair é só tirar a linha dele de SERVER_HOSTS.
+    #[test]
+    fn as_tres_faces_do_servidor_sao_internas() {
+        assert!(internal("https://ai.shvia.org/chat"));
+        assert!(internal("https://ia.shvia.org/chat"));
+        assert!(internal("https://ia.blue3.com.br/chat"));
+        assert!(!internal("http://ai.shvia.org/chat")); // servidor só em https
+    }
+
+    /// Fim do curinga: o ápex shvia.org é a LANDING (outro IP) e subdomínio
+    /// qualquer de blue3.com.br não é o ShvIA. Nada disso carrega dentro do app.
+    ///
+    /// `mem.shvia.org` (ai-memory, mesmo IP do ápex) é o caso REAL, não
+    /// hipotético: subdomínio nosso, legítimo, no ar, servindo wiki escrita por
+    /// agentes. É o que o curinga deixaria entrar sem ninguém decidir nada.
+    #[test]
+    fn outras_origens_sao_externas() {
+        assert!(!internal("https://shvia.org/"));
+        assert!(!internal("https://www.shvia.org/"));
+        assert!(!internal("https://mem.shvia.org/"));
+        assert!(!internal("https://evil.shvia.org/"));
+        assert!(!internal("https://blue3.com.br/"));
+        assert!(!internal("https://evil.blue3.com.br/"));
+        assert!(!internal("https://ai.shvia.org.evil.com/"));
+        assert!(!internal("file:///etc/passwd"));
+    }
+    /// `AGENTS.md` e `CLAUDE.md` são o mesmo texto abaixo do H1 — achado F-21.
+    ///
+    /// Os dois arquivos JÁ exigiam isso, por escrito, de si mesmos. E os dois violavam:
+    /// no DESKTOP o comentário HTML do topo, no MOBILE o blockquote "Leia também". Não por
+    /// desleixo — o bloco que divergia era exatamente o que dizia *"este arquivo é espelho
+    /// do outro"*, e escrito em 1ª pessoa ele **não pode** ser idêntico nos dois. A regra
+    /// era impossível de cumprir, o que é a razão pela qual instrução sem guarda apodrece:
+    /// ninguém percebe que está pedindo o impossível.
+    ///
+    /// O ponteiro foi reescrito na 3ª pessoa (nomeia os dois arquivos, não "este"), e agora
+    /// a régua vale de verdade. Um `diff` de uma linha, que roda a cada `cargo test`.
+    #[test]
+    fn agents_e_claude_sao_espelho() {
+        let raiz = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        // Nos dois repos Tauri o Cargo.toml vive em `src-tauri/`; no CODE, na raiz.
+        let base = if raiz.join("../AGENTS.md").exists() { raiz.join("..") } else { raiz.to_path_buf() };
+        let ler = |n: &str| {
+            let p = base.join(n);
+            let t = std::fs::read_to_string(&p).unwrap_or_else(|e| panic!("{} ilegível: {e}", p.display()));
+            // Fora o H1 (a única linha que PODE diferir: cada arquivo tem seu título).
+            t.lines().skip(1).collect::<Vec<_>>().join("\n")
+        };
+        let agents = ler("AGENTS.md");
+        let claude = ler("CLAUDE.md");
+        assert!(agents.len() > 500, "AGENTS.md tem {} bytes abaixo do H1 — a régua estaria medindo o vazio", agents.len());
+        if agents != claude {
+            let a: Vec<&str> = agents.lines().collect();
+            let c: Vec<&str> = claude.lines().collect();
+            let primeira = (0..a.len().max(c.len()))
+                .find(|&i| a.get(i) != c.get(i))
+                .map(|i| format!("linha {} abaixo do H1:\n    AGENTS.md: {:?}\n    CLAUDE.md: {:?}",
+                    i + 2, a.get(i).unwrap_or(&"<fim>"), c.get(i).unwrap_or(&"<fim>")))
+                .unwrap_or_default();
+            panic!("AGENTS.md e CLAUDE.md divergem abaixo do H1 — {primeira}");
+        }
+    }
+
+    /// Toda `uses:` do CI está pinada por SHA de commit — achado F-09.
+    ///
+    /// Tag de GitHub Action é **ponteiro móvel**: `actions/checkout@v4` roda o que o dono
+    /// do repositório publicar amanhã sob aquela tag, com as permissões deste workflow e
+    /// acesso ao token do job. Não é hipótese remota — é o vetor de `tj-actions/changed-files`
+    /// (03/2025), em que uma tag movida passou a vazar segredos de milhares de repositórios.
+    ///
+    /// A régua persegue a causa, não o sintoma: o defeito não é "esta action está solta", é
+    /// **uma action nova entrar sem pin**. Por isso ela varre o diretório inteiro e não uma
+    /// lista — um workflow novo já nasce medido.
+    ///
+    /// O comentário `# vX.Y.Z` ao lado do SHA não é enfeite: sem ele, subir o pin vira
+    /// arqueologia. A régua exige os dois.
+    #[test]
+    fn toda_action_do_ci_esta_pinada_por_sha() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.github/workflows");
+        let mut vistos = 0usize;
+        let mut soltas: Vec<String> = Vec::new();
+
+        let entradas = std::fs::read_dir(&dir).expect("o repositório tem .github/workflows");
+        for e in entradas.flatten() {
+            let caminho = e.path();
+            let ext = caminho.extension().and_then(|x| x.to_str()).unwrap_or("");
+            if ext != "yml" && ext != "yaml" {
+                continue;
+            }
+            let arquivo = caminho.file_name().unwrap().to_string_lossy().to_string();
+            let texto = std::fs::read_to_string(&caminho).expect("workflow legível");
+            for (n, linha) in texto.lines().enumerate() {
+                let corte = linha.trim_start();
+                // Só `uses:` de action; `uses:` dentro de comentário não conta.
+                if corte.starts_with('#') {
+                    continue;
+                }
+                let Some(resto) = corte.strip_prefix("- uses:").or_else(|| corte.strip_prefix("uses:")) else {
+                    continue;
+                };
+                let referencia = resto.trim().split('#').next().unwrap_or("").trim();
+                // `uses:` local (`./algo`) e de container (`docker://`) não têm SHA a pinar.
+                if referencia.starts_with('.') || referencia.starts_with("docker://") {
+                    continue;
+                }
+                vistos += 1;
+                let sha = referencia.rsplit('@').next().unwrap_or("");
+                let pinada = sha.len() == 40 && sha.chars().all(|c| c.is_ascii_hexdigit());
+                // O comentário que diz QUAL versão o SHA é.
+                let tem_nota = linha.contains('#');
+                if !pinada || !tem_nota {
+                    let porque = if pinada { "sem o comentário dizendo a versão" } else { "não é SHA de 40 hex" };
+                    soltas.push(format!("{arquivo}:{}  {referencia}  ({porque})", n + 1));
+                }
+            }
+        }
+
+        assert!(vistos > 0, "nenhuma `uses:` encontrada — a régua estaria medindo o vazio");
+        assert!(
+            soltas.is_empty(),
+            "action(s) do CI sem pin por SHA (+ comentário da versão):\n  {}\n\
+             Resolva a tag com:\n  \
+             gh api repos/<dono>/<repo>/git/ref/tags/<tag> --jq '.object.sha'",
+            soltas.join("\n  ")
+        );
+    }
+
+    /// Todo `.md` de `docs/` é alcançável por link a partir do índice — achado D-DOC-10.
+    ///
+    /// Documento órfão não é doc velha: é doc que **ninguém sabe que existe**. O
+    /// `docs/loja-ficha.md` do MOBILE é a ficha do App Store Connect pronta para colar, com
+    /// os limites de caracteres da Apple anotados — escrita em 04/08 e nunca linkada, num
+    /// repo cuja submissão está pendente. O custo de um órfão não é o arquivo; é alguém
+    /// reescrever o que já estava pronto.
+    ///
+    /// A régua não julga se a doc está atualizada — julga se dá para CHEGAR nela. Um `.md`
+    /// novo em `docs/` deixa o `cargo test` vermelho até alguém decidir onde ele entra no
+    /// índice, que é a decisão que ninguém toma quando o arquivo simplesmente aparece.
+    #[test]
+    fn todo_doc_e_alcancavel() {
+        let raiz = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let base = if raiz.join("../docs").is_dir() { raiz.join("..") } else { raiz.to_path_buf() };
+        let docs = base.join("docs");
+        if !docs.is_dir() {
+            return; // repo sem `docs/` não tem o que medir
+        }
+
+        // Os arquivos que podem CONTER links para os docs: tudo que é índice aqui.
+        let mut indice = String::new();
+        for n in ["README.md", "README_br.md", "docs/README.md", "CLAUDE.md", "AGENTS.md"] {
+            if let Ok(t) = std::fs::read_to_string(base.join(n)) {
+                indice.push_str(&t);
+            }
+        }
+        // E os próprios docs linkam entre si — um doc alcançado por outro doc conta.
+        let mut arquivos: Vec<std::path::PathBuf> = Vec::new();
+        fn anda(d: &std::path::Path, saida: &mut Vec<std::path::PathBuf>) {
+            if let Ok(e) = std::fs::read_dir(d) {
+                for x in e.flatten() {
+                    let p = x.path();
+                    if p.is_dir() {
+                        anda(&p, saida);
+                    } else if p.extension().and_then(|s| s.to_str()) == Some("md") {
+                        saida.push(p);
+                    }
+                }
+            }
+        }
+        anda(&docs, &mut arquivos);
+        for f in &arquivos {
+            if let Ok(t) = std::fs::read_to_string(f) {
+                indice.push_str(&t);
+            }
+        }
+
+        let orfaos: Vec<String> = arquivos
+            .iter()
+            .filter_map(|f| {
+                let rel = f.strip_prefix(&base).ok()?.to_string_lossy().to_string();
+                let nome = f.file_name()?.to_string_lossy().to_string();
+                // `docs/README.md` é o índice: ele não precisa ser linkado por ninguém.
+                if rel == "docs/README.md" {
+                    return None;
+                }
+                // Alcançável se alguém escreve um LINK markdown que termine no caminho ou
+                // no nome do arquivo — `](docs/x.md)`, `](x.md)`, `](../docs/x.md)`.
+                let alvo_a = format!("]({rel})");
+                let alvo_b = format!("]({nome})");
+                let alvo_c = format!("/{nome})");
+                let visto = indice.contains(&alvo_a) || indice.contains(&alvo_b) || indice.contains(&alvo_c);
+                (!visto).then_some(rel)
+            })
+            .collect();
+
+        assert!(!arquivos.is_empty(), "docs/ vazio — a régua estaria medindo o vazio");
+        assert!(
+            orfaos.is_empty(),
+            "documento(s) em docs/ sem NENHUM link apontando para eles:\n  {}\n\
+             Um .md que ninguém alcança é trabalho que alguém vai refazer. Linke no índice \
+             (README.md ou docs/README.md) ou apague.",
+            orfaos.join("\n  ")
+        );
+    }
+
 }

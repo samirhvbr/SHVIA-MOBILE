@@ -58,8 +58,8 @@ targets:
         # à mão em 30/07. Quem manda no bundle é `shvia-mobile_iOS/Info.plist`
         # (INFOPLIST_FILE do alvo) — isto aqui só volta a valer se o XcodeGen
         # regenerar o .xcodeproj, o que só acontece num novo `tauri ios init`.
-        CFBundleShortVersionString: 0.6.8
-        CFBundleVersion: "0.6.8"
+        CFBundleShortVersionString: 0.6.19
+        CFBundleVersion: "0.6.19"
     # ATENÇÃO: o XcodeGen GERA o arquivo .entitlements a partir daqui a cada
     # regeneração — edição manual no arquivo morre no próximo generate (foi o
     # que apagou o aps-environment em 04/08). A fonte da verdade é ESTE bloco.
