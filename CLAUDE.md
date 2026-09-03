@@ -37,7 +37,7 @@ keystore. O *build* aqui é Tauri (não Flutter) — reusa identidades, não o p
 
 ## Padrão de Commits (obrigatório)
 
-Formato: `versão - comentário em português`. A versão **sempre** vem de `version.md`
+Formato: `X.Y.Z - description in English (US)`. A versão **sempre** vem de `version.md`
 (bumpe no mesmo commit; `scripts/sync-version.mjs` propaga p/ package.json /
 tauri.conf.json / Cargo.*). Critério: **Z** = UI/tela/ícone/ajuste de build; **Y** =
 nova capacidade de runtime/IPC; **X** = estável. Proibido `feat:`/`fix:`/`chore:`.
@@ -110,6 +110,13 @@ the task*, not a follow-up for someone else. If you are about to write
   heading *is* the subject.
 - No Conventional Commits prefix (`feat:`, `fix:`, `chore:`) and no vague
   subject ("update", "ajuste", "wip", "changes", "several improvements").
+
+**The bump is the one clause a repository may override — in writing.** If this
+repository's own documentation says the version is stamped some other way, and says
+why, follow that. Otherwise the line above applies to you. An override nobody wrote
+down is not an exception. Nothing else in this block bends: the changelog entry, the
+subject, the language, one subject per commit, and committing before you report done
+all hold regardless.
 
 **One subject per commit.** The subject has to describe the whole commit
 honestly. The moment your description needs an "and" to be true, it is two
